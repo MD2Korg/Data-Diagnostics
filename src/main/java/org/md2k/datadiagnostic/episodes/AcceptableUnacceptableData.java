@@ -58,7 +58,7 @@ public class AcceptableUnacceptableData {
 				if (windows.get(i).getQuality() == DATA_QUALITY.GOOD) {
 					this.acceptableData
 							.add(new DataPointQuality(windows.get(i).getDataPoints(), DATA_QUALITY.ACCEPTABLE_DATA));
-				} else {
+				} else if(windows.get(i).getQuality() == DATA_QUALITY.DATA_LOST){
 					this.unacceptableData
 							.add(new DataPointQuality(windows.get(i).getDataPoints(), DATA_QUALITY.UNACCEPTABLE_DATA));
 				}

@@ -42,7 +42,7 @@ import org.md2k.datadiagnostic.util.Util;
  */
 public class VarianceBasedDataQuality  {
 
-    private static final double RIP_VARIANCE_THRESHOLD = 0.00003;
+    private static final double RIP_VARIANCE_THRESHOLD = 1000; //0.00003 for microsoft band
     
     public int currentQuality(List<DataPoints> timestampsAndValues) {
     	//if(timestampsAndValues.get(0).getTimestamp()>=1470402484880l && timestampsAndValues.get(0).getTimestamp()<=1470402484880l)
@@ -50,10 +50,10 @@ public class VarianceBasedDataQuality  {
     	List<Double> normalValues = new ArrayList<Double>();
     	List<Double> values = new ArrayList<Double>();
     	
-    	/*double expectedSample = (21.33*60)/timestampsAndValues.size();
+    	double expectedSample = timestampsAndValues.size()/(6*60);
     	if(expectedSample<0.33){
-    		return 4;
-    	}*/
+    		return DATA_QUALITY.DATA_LOST;
+    	}
     	if (timestampsAndValues.size() == 0) {
             return DATA_QUALITY.SENSOR_OFF;
         }

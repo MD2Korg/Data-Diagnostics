@@ -29,7 +29,7 @@ package org.md2k.datadiagnostic.configurations;
 public class DATA_QUALITY {
     public static final int GOOD = 0;
     public static final int SENSOR_OFF = 1;
-  //Wireless disconnections = Sensor Unavailable
+    //Wireless disconnections = Sensor Unavailable
     public static final int SENSOR_UNAVAILABLE = 2;
     public static final int DATA_LOST=3;
     public static final int SENSOR_OFF_BODY = 4;

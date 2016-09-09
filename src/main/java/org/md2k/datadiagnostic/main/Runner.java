@@ -138,7 +138,7 @@ public class Runner {
 		// quality data
 		activeInactiveEpisodes.separateAcceptableUnacceptableData(fixedSizeWindows.windows, sessionStartTime,
 				sessionEndTime);
-		System.out.println("Acceptable data: " + Util.dataPointsQualityTime(activeInactiveEpisodes.acceptableData));
+		System.out.println("Acceptable data: " + Util.dataPointsQualityTime(activeInactiveEpisodes.acceptableData)+" Unacceptable data: " + Util.dataPointsQualityTime(activeInactiveEpisodes.unacceptableData));
 		
 		// Delay in attachment
 		delayedAttachment.getDelayInAttachment(activeInactiveEpisodes.acceptableData, sessionStartTime);

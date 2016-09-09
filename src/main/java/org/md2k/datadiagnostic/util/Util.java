@@ -148,8 +148,8 @@ public class Util {
 		for(int i=0;i<haystack.size();i++){
 			
 			for(int j=0;j<needle.size();j++){
-				System.out.println(haystack.get(i).getTimestamp()+" == "+needle.get(j).getTimestamp()+" ---- "+haystack.get(i).getEndTimestamp()+" == "+needle.get(j).getEndTimestamp());
-				System.out.println();
+				//System.out.println(haystack.get(i).getTimestamp()+" == "+needle.get(j).getTimestamp()+" ---- "+haystack.get(i).getEndTimestamp()+" == "+needle.get(j).getEndTimestamp());
+				//System.out.println();
 				if(haystack.get(i).equals(needle.get(j))){
 					tmp=0;
 					break;

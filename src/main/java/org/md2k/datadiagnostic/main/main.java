@@ -11,7 +11,7 @@ public class main {
 	 */
 	public static void main(String[] args) {
 		
-		String sensorType = "acc_microsoft_band";
+		String sensorType = "ecg";
 		String inputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/Shahin/data/merged/";
 		String outputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/output/";
 		

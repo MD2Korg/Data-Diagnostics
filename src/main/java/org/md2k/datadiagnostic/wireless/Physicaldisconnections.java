@@ -8,6 +8,7 @@ import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.signalquality.algorithms.RIPQualityCalculation;
 import org.md2k.datadiagnostic.struct.DataPointQuality;
 import org.md2k.datadiagnostic.struct.DataPoints;
+import org.md2k.datadiagnostic.util.Util;
 
 public class Physicaldisconnections {
 
@@ -40,10 +41,12 @@ public class Physicaldisconnections {
 					tempArray.add(new DataPoints(rawData.get(i).getTimestamp(), rawData.get(i).getValue()));
 					tempArray.add(new DataPoints(rawData.get(i + 1).getTimestamp(), rawData.get(i + 1).getValue()));
 					this.wirelessDisconnections.add(new DataPointQuality(tempArray, DATA_QUALITY.SENSOR_UNAVAILABLE));
+					
 					tempArray.clear();
 				}
 			}
 		}
+		
 	}
 
 }
