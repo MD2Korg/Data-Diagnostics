@@ -33,13 +33,14 @@ public class BatteryLevel {
 	 * @param dayEndTime
 	 *            end time of a day
 	 */
-	public void phoneBatteryDown(List<DataPoints> rawBatteryLevels, long startDayTime, long endDayTime) {
+	public void phoneBatteryDown(List<DataPoints> rawBatteryLevels) {
 		//long phoneOnTime = 0, phoneOffTime = 0;
 		
 		// iterate over battery levels to see if there is 0 battery level
 		for (int i = 0; i < rawBatteryLevels.size() - 1; i++) {
-			if (rawBatteryLevels.get(i).getTimestamp() >= startDayTime
-					&& rawBatteryLevels.get(i).getTimestamp() <= endDayTime) {
+			/*if (rawBatteryLevels.get(i).getTimestamp() >= startDayTime
+					&& rawBatteryLevels.get(i).getTimestamp() <= endDayTime) 
+			{*/
 
 				// check if two stamps have more than 10 (threshold) seconds
 				// difference
@@ -48,7 +49,7 @@ public class BatteryLevel {
 					phoneBatteryDown.add(new DataPoints(rawBatteryLevels.get(i).getTimestamp(),rawBatteryLevels.get(i+1).getTimestamp()));
 				}
 
-			}
+			//}
 		}
 				
 	}
@@ -64,13 +65,12 @@ public class BatteryLevel {
 	 * @param dayEndTime
 	 *            end time of a day
 	 */
-	public void phonePoweredOff(List<DataPoints> rawBatteryLevels, long startDayTime, long endDayTime) {
+	public void phonePoweredOff(List<DataPoints> rawBatteryLevels) {
 		//long phonePoweredOffTime = 0;
 
 		// iterate over battery levels to see if there is 0 battery level
 		for (int i = 0; i < rawBatteryLevels.size() - 1; i++) {
-			if (rawBatteryLevels.get(i).getTimestamp() >= startDayTime
-					&& rawBatteryLevels.get(i).getTimestamp() <= endDayTime) {
+			
 				// check if two stamps has more than 60 (threshold) seconds
 				// difference
 				if (((rawBatteryLevels.get(i).getTimestamp() - rawBatteryLevels.get(i + 1).getTimestamp()) > DDT_PARAMETERS.PHONE_SENSOR_DIFF)
@@ -80,7 +80,7 @@ public class BatteryLevel {
 					phonePoweredOff.add(new DataPoints(rawBatteryLevels.get(i).getTimestamp(),rawBatteryLevels.get(i+1).getTimestamp()));
 					System.out.println("====="+phoneBatteryDown.size());
 				}
-			}
+			
 		}
 		
 		//System.out.println("Phone Powered Off (MilliSeconds): " + phonePoweredOffTime);
@@ -98,12 +98,11 @@ public class BatteryLevel {
 	 * @param dayEndTime
 	 *            end time of a day
 	 */
-	public void sensorBatteryDown(List<DataPoints> rawBatteryLevels, long startDayTime, long endDayTime) {
+	public void sensorBatteryDown(List<DataPoints> rawBatteryLevels) {
 		double voltageValue;
 		//long sensorPoweredOffTime = 0;
 		for (int i = 0; i < rawBatteryLevels.size()-1; i++) {
-			if (rawBatteryLevels.get(i).getTimestamp() >= startDayTime
-					&& rawBatteryLevels.get(i).getTimestamp() <= endDayTime) {
+			
 			// ADC value to voltage
 			voltageValue = (rawBatteryLevels.get(i).getValue() / 4096) * 3 * 2;
 				if (((rawBatteryLevels.get(i).getTimestamp() - rawBatteryLevels.get(i + 1).getTimestamp()) > DDT_PARAMETERS.AUTOSENSE_SENSOR_DIFF)
@@ -111,7 +110,7 @@ public class BatteryLevel {
 				/*sensorPoweredOffTime += (rawBatteryLevels.get(i).getTimestamp()
 						- rawBatteryLevels.get(i + 1).getTimestamp());*/
 					sensorBatteryDown.add(new DataPoints(rawBatteryLevels.get(i).getTimestamp(),rawBatteryLevels.get(i+1).getTimestamp()));
-			}
+			
 			}
 		}
 		//System.out.println("Sensor Battery Down: " + sensorPoweredOffTime);
@@ -128,12 +127,11 @@ public class BatteryLevel {
 	 * @param dayEndTime
 	 *            end time of a day
 	 */
-	public void sensorPoweredOff(List<DataPoints> rawBatteryLevels, long startDayTime, long endDayTime) {
+	public void sensorPoweredOff(List<DataPoints> rawBatteryLevels) {
 		double voltageValue;
 		//long sensorOnTime = 0, sensorOffTime = 0;
 		for (int i = 0; i < rawBatteryLevels.size()-1; i++) {
-			if (rawBatteryLevels.get(i).getTimestamp() >= startDayTime
-					&& rawBatteryLevels.get(i).getTimestamp() <= endDayTime) {
+			
 			// ADC value to voltage
 			voltageValue = (rawBatteryLevels.get(i).getValue() / 4096) * 3 * 2;
 				if (((rawBatteryLevels.get(i).getTimestamp() - rawBatteryLevels.get(i + 1).getTimestamp()) > DDT_PARAMETERS.AUTOSENSE_SENSOR_DIFF)
@@ -142,7 +140,7 @@ public class BatteryLevel {
 						- rawBatteryLevels.get(i + 1).getTimestamp());*/
 					sensorPoweredOff.add(new DataPoints(rawBatteryLevels.get(i).getTimestamp(),rawBatteryLevels.get(i+1).getTimestamp()));
 			}
-			}
+			
 		}
 		//sensorOnTime = (endDayTime - startDayTime) - sensorOffTime;
 

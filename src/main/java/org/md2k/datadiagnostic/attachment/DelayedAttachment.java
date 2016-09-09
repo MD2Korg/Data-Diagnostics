@@ -25,7 +25,6 @@ public class DelayedAttachment {
 		
 		firstGoodWindowTime = windows.get(0).getDataPoints().get(0).getTimestamp();
 		totalDelayInAttachment = firstGoodWindowTime - startDayTime;
-		System.out.println(firstGoodWindowTime +"====="+ startDayTime);
 	}
 	
 	//Merge respiration and ECG signal data to check if there is any delay

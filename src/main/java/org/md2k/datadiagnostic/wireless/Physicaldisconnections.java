@@ -29,12 +29,12 @@ public class Physicaldisconnections {
 	 * @param endDayTime
 	 *            end time of a day in milliseconds
 	 */
-	public void getWirelessDisconnections(List<DataPoints> rawData, long startDayTime, long endDayTime) {
+	public void getWirelessDisconnections(List<DataPoints> rawData) {
 		List<DataPoints> tempArray = new ArrayList<DataPoints>();
 		long timeDiff;
 		for (int i = 0; i < rawData.size() - 1; i++) {
 
-			if (rawData.get(i).getTimestamp() >= startDayTime && rawData.get(i).getTimestamp() <= endDayTime) {
+			
 
 				timeDiff = rawData.get(i + 1).getTimestamp() - rawData.get(i).getTimestamp();
 				if (timeDiff >= DDT_PARAMETERS.WIRELESS_DISCONNECTION) {
@@ -43,7 +43,7 @@ public class Physicaldisconnections {
 					this.wirelessDisconnections.add(new DataPointQuality(tempArray, DATA_QUALITY.SENSOR_UNAVAILABLE));
 					
 					tempArray.clear();
-				}
+				
 			}
 		}
 		

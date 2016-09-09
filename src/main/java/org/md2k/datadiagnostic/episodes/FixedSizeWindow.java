@@ -19,15 +19,15 @@ public class FixedSizeWindow {
 
 	
 	public List<DataPointQuality> windows;
-	public List<DataPointQuality> ecgWindows;
-	public List<DataPointQuality> aclWindows;
-	public ArrayList<DataPoints> mergedWindows;
+	//public List<DataPointQuality> ecgWindows;
+	//public List<DataPointQuality> aclWindows;
+	//public ArrayList<DataPoints> mergedWindows;
 	
 	public FixedSizeWindow(){
 		windows = new ArrayList<DataPointQuality>();
-		ecgWindows = new ArrayList<DataPointQuality>();
-		aclWindows = new ArrayList<DataPointQuality>();
-		mergedWindows = new ArrayList<DataPoints>();
+		//ecgWindows = new ArrayList<DataPointQuality>();
+		//aclWindows = new ArrayList<DataPointQuality>();
+		//mergedWindows = new ArrayList<DataPoints>();
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class FixedSizeWindow {
 	 *            Time window size in milliseconds
 	 * @return ArrayList of data split by size
 	 */
-	public void createACLWindows(List<DataPoints> data, long size) {
+	/*public void createACLWindows(List<DataPoints> data, long size) {
 		VarianceBasedDataQuality aclQualityCalculation = new VarianceBasedDataQuality();
 		long startTime, endTime;
 		List<DataPoints> tempArray = new ArrayList<DataPoints>();
@@ -113,7 +113,7 @@ public class FixedSizeWindow {
 				temp1.clear();
 			}
 		}
-	}
+	}*/
 	
 	
 	/**
@@ -125,7 +125,7 @@ public class FixedSizeWindow {
 	 *            Time window size in milliseconds
 	 * @return ArrayList of data split by size
 	 */
-	public void createECGWindows(List<DataPoints> data, long size) {
+	/*public void createECGWindows(List<DataPoints> data, long size) {
 		ECGQualityCalculation ecgQualityCalculation = new ECGQualityCalculation();
 		long startTime, endTime;
 		List<DataPoints> tempArray = new ArrayList<DataPoints>();
@@ -154,7 +154,7 @@ public class FixedSizeWindow {
 				temp1.clear();
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * Creates larger timestamp windows by merging small consecutive windows

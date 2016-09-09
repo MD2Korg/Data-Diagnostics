@@ -48,13 +48,11 @@ public class AcceptableUnacceptableData {
 	 * @param start time of a day milliseconds
 	 * @param end time of a day in milliseconds 
 	 */
-	public void separateAcceptableUnacceptableData(List<DataPointQuality> windows, long startDayTime,
-			long endDayTime) {
+	public void separateAcceptableUnacceptableData(List<DataPointQuality> windows) {
 		int size=0;
 		for (int i = 0; i < windows.size(); i++) {
 			size = windows.get(i).getDataPoints().size();
-			if (windows.get(i).getDataPoints().get(0).getTimestamp() >= startDayTime
-					&& windows.get(i).getDataPoints().get(size-1).getTimestamp() <= endDayTime) {
+			
 				if (windows.get(i).getQuality() == DATA_QUALITY.GOOD) {
 					this.acceptableData
 							.add(new DataPointQuality(windows.get(i).getDataPoints(), DATA_QUALITY.ACCEPTABLE_DATA));
@@ -62,7 +60,7 @@ public class AcceptableUnacceptableData {
 					this.unacceptableData
 							.add(new DataPointQuality(windows.get(i).getDataPoints(), DATA_QUALITY.UNACCEPTABLE_DATA));
 				}
-			}
+			
 		}
 	}
 

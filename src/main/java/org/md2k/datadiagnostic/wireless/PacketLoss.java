@@ -30,7 +30,7 @@ public class PacketLoss {
 	 *            end time of a day in milliseconds
 	 */
 	public void countPacketLoss(List<DataPointQuality> windows, List<DataPointQuality> wirelessDisconnections,
-			double windowSize, long startDayTime, long endDayTime, double samplingRate) {
+			double windowSize, double samplingRate) {
 		long startTime;
 		double endTime;
 		long expectedSamples = 0;
@@ -38,8 +38,7 @@ public class PacketLoss {
 
 		for (int i = 0; i < windows.size(); i++) {
 			size = windows.get(i).getDataPoints().size();
-			if (windows.get(i).getDataPoints().get(0).getTimestamp() >= startDayTime
-					&& windows.get(i).getDataPoints().get(size - 1).getTimestamp() <= endDayTime) {
+			
 				// check, window quality should be good
 				size = windows.get(i).getDataPoints().size();
 				startTime = windows.get(i).getDataPoints().get(0).getTimestamp();
@@ -50,7 +49,7 @@ public class PacketLoss {
 						totalLostPackets += expectedSamples - size;
 					}
 				}
-			}
+			
 		}
 		System.out.println("Total lost packets: " + totalLostPackets);
 	}

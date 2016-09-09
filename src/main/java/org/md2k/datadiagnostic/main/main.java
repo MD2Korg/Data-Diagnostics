@@ -16,8 +16,6 @@ public class main {
 		String outputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/output/";
 		
 		Runner run = new Runner(sensorType, inputPath, outputPath);
-		//run.diagnose("rip");
-		
 
 	}
 }

@@ -25,21 +25,19 @@ public class ImproperAttachment {
 	 * @param startDayTime start time of a day
 	 * @param endDayTime end time of a day
 	 */
-	public void getImproperAttachmentPeriods(List<DataPointQuality> windows, long startDayTime,
-			long endDayTime) {
+	public void getImproperAttachmentPeriods(List<DataPointQuality> windows) {
 		//ArrayList<DataPoints> goodQualityWindows = new ArrayList<DataPoints>();	
 		long totalTime=0;
 		int size=0;
 		for (int i = 0; i < windows.size(); i++) {
 			size = windows.get(i).getDataPoints().size();
-			if (windows.get(i).getDataPoints().get(0).getTimestamp() >= startDayTime
-					&& windows.get(i).getDataPoints().get(size-1).getTimestamp() <= endDayTime) {
-				if(windows.get(i).getQuality()== DATA_QUALITY.IMPROPER_ATTACHMENT && windows.get(i).getDataPoints().get(0).getTimestamp()>=startDayTime){
+			
+				if(windows.get(i).getQuality()== DATA_QUALITY.IMPROPER_ATTACHMENT){
 					size = windows.get(i).getDataPoints().size();
 					totalTime += windows.get(i).getDataPoints().get(size-1).getTimestamp()-windows.get(i).getDataPoints().get(0).getTimestamp();
 					improperAttachment.add(new DataPoints(windows.get(i).getDataPoints().get(0).getTimestamp(),windows.get(i).getDataPoints().get(size-1).getTimestamp()));
 				} 
-			}
+			
 		}
 	}
 	

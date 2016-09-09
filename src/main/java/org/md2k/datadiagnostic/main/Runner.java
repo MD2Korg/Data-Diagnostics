@@ -36,7 +36,7 @@ public class Runner {
 	double samplingRate;
 
 	public Runner(String streamName, String inputPath, String outputPath) {
-		dayStartData = new ArrayList<DataPoints>();
+		//dayStartData = new ArrayList<DataPoints>();
 		sensorData = new ArrayList<DataPoints>();
 		phoneBatteryData = new ArrayList<DataPoints>();
 		sensorBatteryData = new ArrayList<DataPoints>();
@@ -44,10 +44,10 @@ public class Runner {
 		dataLoader = new DataLoader();
 		this.outputPath = outputPath;
 		
-		SessionMarker sessionMarker = new SessionMarker();
+		//SessionMarker sessionMarker = new SessionMarker();
 
 		// Calculate start and end time of a day (aka Active period)
-		sessionMarker.getAllSessionStartEndTimes(fixedSizeWindows.windows, dayStartData);
+		//sessionMarker.getAllSessionStartEndTimes(fixedSizeWindows.windows, dayStartData);
 
 		if (streamName.equals("battery")) {
 			dayStartData = dataLoader.loadCSV(inputPath+"start_day.csv");
@@ -78,57 +78,54 @@ public class Runner {
 
 	private void runner() {
 		// Class objects
-		SessionMarker sessionMarker = new SessionMarker();
+		//SessionMarker sessionMarker = new SessionMarker();
 
 		// Calculate start and end time of a day (aka Active period)
-		sessionMarker.getAllSessionStartEndTimes(fixedSizeWindows.windows, dayStartData);
+		//sessionMarker.getAllSessionStartEndTimes(fixedSizeWindows.windows, dayStartData);
 
 		// loop over all the start and end sessions available
-		for (int i = 0; i < sessionMarker.startEndTimes.size(); i++) {
-			diagnoseBatteryData(sessionMarker.startEndTimes.get(i).getTimestamp(),
-					sessionMarker.startEndTimes.get(i).getEndTimestamp());
+		//for (int i = 0; i < sessionMarker.startEndTimes.size(); i++) 
+		{
+			diagnoseBatteryData();
 
-			diagnoseWirelessData(sessionMarker.startEndTimes.get(i).getTimestamp(),
-					sessionMarker.startEndTimes.get(i).getEndTimestamp());
+			diagnoseWirelessData();
 
-			diagnoseSensorData(sessionMarker.startEndTimes.get(i).getTimestamp(),
-					sessionMarker.startEndTimes.get(i).getEndTimestamp());
+			diagnoseSensorData();
 			System.out.println("-------------------------------------------------------");
 		}
 
 	}
 
-	public void diagnoseBatteryData(long sessionStartTime, long sessionEndTime) {
+	public void diagnoseBatteryData() {
 		BatteryLevel batteryLevel = new BatteryLevel();
 		// calculate phone off time during active period
-		batteryLevel.phoneBatteryDown(phoneBatteryData, sessionStartTime, sessionEndTime);
-		batteryLevel.phonePoweredOff(phoneBatteryData, sessionStartTime, sessionEndTime);
+		batteryLevel.phoneBatteryDown(phoneBatteryData);
+		batteryLevel.phonePoweredOff(phoneBatteryData);
 
 		System.out.println("Phone battery down: "+Util.dataPointsTime(batteryLevel.phoneBatteryDown)+" -- Phone battery off: "+Util.dataPointsTime(batteryLevel.phonePoweredOff));
 		
 		// calculate sensor off time during active period
-		batteryLevel.sensorBatteryDown(sensorBatteryData, sessionStartTime, sessionEndTime);
-		batteryLevel.sensorPoweredOff(sensorBatteryData, sessionStartTime, sessionEndTime);
+		batteryLevel.sensorBatteryDown(sensorBatteryData);
+		batteryLevel.sensorPoweredOff(sensorBatteryData);
 		System.out.println("Sensor battery down: "+Util.dataPointsTime(batteryLevel.sensorBatteryDown)+" -- Sensor battery off: "+Util.dataPointsTime(batteryLevel.sensorPoweredOff));
 		
 	}
 
-	public void diagnoseWirelessData(long sessionStartTime, long sessionEndTime) {
+	public void diagnoseWirelessData() {
 		Physicaldisconnections physicaldisconnections = new Physicaldisconnections();
 		PacketLoss packetLoss = new PacketLoss();
 		// calculate wireless disconnection
-		physicaldisconnections.getWirelessDisconnections(sensorData, sessionStartTime, sessionEndTime);
+		physicaldisconnections.getWirelessDisconnections(sensorData);
 		System.out.println(
 				"Wireless Disconnection: " + Util.dataPointsQualityTime(physicaldisconnections.wirelessDisconnections));
 
 		// calculate packet loss
 		// packet loss could be computed for both good and bad periods.
 		// Currently, it computers for bad quality data
-		packetLoss.countPacketLoss(fixedSizeWindows.windows, physicaldisconnections.wirelessDisconnections, 60,
-				sessionStartTime, sessionEndTime, samplingRate);
+		packetLoss.countPacketLoss(fixedSizeWindows.windows, physicaldisconnections.wirelessDisconnections, 60, samplingRate);
 	}
 
-	public void diagnoseSensorData(long sessionStartTime, long sessionEndTime) {
+	public void diagnoseSensorData() {
 
 		AcceptableUnacceptableData activeInactiveEpisodes = new AcceptableUnacceptableData();
 		DelayedAttachment delayedAttachment = new DelayedAttachment();
@@ -136,16 +133,15 @@ public class Runner {
 
 		// Acceptable good quality data. From this point, only unacceptable
 		// quality data
-		activeInactiveEpisodes.separateAcceptableUnacceptableData(fixedSizeWindows.windows, sessionStartTime,
-				sessionEndTime);
+		activeInactiveEpisodes.separateAcceptableUnacceptableData(fixedSizeWindows.windows);
 		System.out.println("Acceptable data: " + Util.dataPointsQualityTime(activeInactiveEpisodes.acceptableData)+" Unacceptable data: " + Util.dataPointsQualityTime(activeInactiveEpisodes.unacceptableData));
 		
 		// Delay in attachment
-		delayedAttachment.getDelayInAttachment(activeInactiveEpisodes.acceptableData, sessionStartTime);
-		System.out.println("Delay in attachment: " + delayedAttachment.totalDelayInAttachment);
+		//delayedAttachment.getDelayInAttachment(activeInactiveEpisodes.acceptableData);
+		//System.out.println("Delay in attachment: " + delayedAttachment.totalDelayInAttachment);
 		
 		// Improper attachment/loose attachment
-		improperAttachment.getImproperAttachmentPeriods(fixedSizeWindows.windows, sessionStartTime, sessionEndTime);
+		improperAttachment.getImproperAttachmentPeriods(fixedSizeWindows.windows);
 		System.out.println("Improper attachment: " + Util.dataPointsTime(improperAttachment.improperAttachment));
 	}
 }
