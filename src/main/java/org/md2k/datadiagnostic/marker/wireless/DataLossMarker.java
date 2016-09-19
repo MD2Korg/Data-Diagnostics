@@ -9,10 +9,10 @@ import org.md2k.datadiagnostic.configurations.METADATA;
 import org.md2k.datadiagnostic.struct.DataPointQuality;
 import org.md2k.datadiagnostic.struct.DataPoints;
 
-public class PacketLoss {
+public class DataLossMarker {
 	public long totalLostPackets;
 
-	public PacketLoss() {
+	public DataLossMarker() {
 		totalLostPackets = 0;
 	}
 
@@ -23,7 +23,7 @@ public class PacketLoss {
 	 * @param windows
 	 *            timestamp windows marked with quality labels
 	 * @param wirelessDisconnections
-	 *            timestamp windows of {@link Physicaldisconnections}
+	 *            timestamp windows of {@link SensorUnavailableMarker}
 	 * @param windowSize
 	 *            in milliseconds
 	 * @param startDayTime
@@ -31,7 +31,7 @@ public class PacketLoss {
 	 * @param endDayTime
 	 *            end time of a day in milliseconds
 	 */
-	public void countPacketLoss(List<DataPointQuality> blankWindows, double windowSize, double samplingRate) {
+	public void packetLossMarker(List<DataPointQuality> blankWindows, double windowSize, double samplingRate) {
 		// long startTime;
 		// double endTime;
 		long expectedSamples = 0;
