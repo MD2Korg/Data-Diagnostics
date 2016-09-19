@@ -55,6 +55,18 @@ public class DataPoints  implements Comparable<DataPoints>{
 		return endTimestamp;
 	}
 	
+	public void setTimestamp(long timestamp){
+		this.timestamp = timestamp;
+	}
+	
+	public void setValue(double value){
+		this.value = value;
+	}
+	
+	public void setEndTimestamp(long endTimestamp){
+		 this.endTimestamp = endTimestamp;
+	}
+	
     /**
      * @return String representation of a DataPoint object
      */

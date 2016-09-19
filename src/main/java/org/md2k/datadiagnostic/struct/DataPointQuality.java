@@ -8,7 +8,7 @@ public class DataPointQuality {
 
 	public DataPoints[] window;
 	public ArrayList<DataPoints> window2 = new ArrayList<DataPoints>();
-	public int quality;
+	public int metadata;
 
 	/**
 	 * DataPointQuality Constructor
@@ -18,29 +18,35 @@ public class DataPointQuality {
 	 * @param quality
 	 *            int point value
 	 */
-	public DataPointQuality(DataPoints[] dpA, int quality) {
+	public DataPointQuality(DataPoints[] dpA, int metadata) {
 
 		this.window = dpA;
-		this.quality = quality;
+		this.metadata = metadata;
 	}
 
-	public DataPointQuality(List<DataPoints> dpA, int quality) {
+	public DataPointQuality(List<DataPoints> dpA, int metadata) {
 
 		this.window2.addAll(dpA);
-		this.quality = quality;
+		this.metadata = metadata;
 	}
 
 	public ArrayList<DataPoints> getDataPoints() {
 		return window2;
 	}
+	
+	
 
 	public int getQuality() {
-		return quality;
+		return metadata;
+	}
+	
+	public void setQuality(int metadata) {
+		this.metadata = metadata;
 	}
 
 	@Override
 	public String toString() {
-		return window2.toString() + "" + quality + "\n";
+		return window2.toString() + "" + metadata + "\n";
 	}
 
 }

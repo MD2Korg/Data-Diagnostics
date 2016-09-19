@@ -1,4 +1,4 @@
-package org.md2k.datadiagnostic.episodes;
+package org.md2k.datadiagnostic.marker;
 
 import java.util.ArrayList;
 import java.util.List;

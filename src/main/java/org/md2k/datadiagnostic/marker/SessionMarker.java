@@ -1,4 +1,4 @@
-package org.md2k.datadiagnostic.episodes;
+package org.md2k.datadiagnostic.marker;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -51,7 +51,7 @@ public class SessionMarker {
 	 * @return end time of a day (long)
 	 */
 	public long getEndTimes(List<DataPointQuality> windows, long startDayTime) {
-		FixedSizeWindow episodeWindow = new FixedSizeWindow();
+		FixedSizeWindowing episodeWindow = new FixedSizeWindowing();
 		ArrayList<DataPoints> goodQualityWindows = new ArrayList<DataPoints>();
 		ArrayList<DataPoints> badQualityWindows = new ArrayList<DataPoints>();
 
@@ -118,7 +118,7 @@ public class SessionMarker {
 	 * @return List<DataPoints> startTime and EndTime
 	 */
 	public List<DataPoints> getEndTimes(List<DataPointQuality> windows) {
-		FixedSizeWindow episodeWindow = new FixedSizeWindow();
+		FixedSizeWindowing episodeWindow = new FixedSizeWindowing();
 		ArrayList<DataPoints> goodQualityWindows = new ArrayList<DataPoints>();
 		ArrayList<DataPoints> badQualityWindows = new ArrayList<DataPoints>();
 
@@ -126,8 +126,8 @@ public class SessionMarker {
 		long endDayTime = 0, startDayTime=0;
 		int size = 0;
 		// Adds 24 hours in the start-time to make a 24 hours window
-		startDayTime = getStartDayTime(windows.get(0).getDataPoints().get(0).getTimestamp());
-		endDayTime = getStartDayTime(windows.get(0).getDataPoints().get(0).getTimestamp());
+		startDayTime = Util.getStartDayTime(windows.get(0).getDataPoints().get(0).getTimestamp());
+		endDayTime = Util.getStartDayTime(windows.get(0).getDataPoints().get(0).getTimestamp());
 
 		for (int i = 0; i < windows.size(); i++) {
 			if (windows.get(i).getQuality() == 0
@@ -162,37 +162,5 @@ public class SessionMarker {
 		return sessionStartEndTime;
 	}
 
-	/**
-	 * 
-	 * @param currentTimestamp
-	 *            any timestamp of a day
-	 * @return 23:59:59 timestamp of currentTimestamp provided.
-	 */
-	private long getEndDayTime(long currentTimestamp) {
-		Timestamp timestamp = new Timestamp(currentTimestamp);
-		Date date2 = new Date(timestamp.getTime());
 
-		date2.setHours(23);
-		date2.setMinutes(59);
-		date2.setSeconds(59);
-
-		return date2.getTime();
-	}
-
-	/**
-	 * 
-	 * @param currentTimestamp
-	 *            any timestamp of a day
-	 * @return 00:00:00 timestamp of currentTimestamp provided.
-	 */
-	private long getStartDayTime(long currentTimestamp) {
-		Timestamp timestamp = new Timestamp(currentTimestamp);
-		Date date2 = new Date(timestamp.getTime());
-
-		date2.setHours(00);
-		date2.setMinutes(00);
-		date2.setSeconds(00);
-
-		return date2.getTime();
-	}
 }

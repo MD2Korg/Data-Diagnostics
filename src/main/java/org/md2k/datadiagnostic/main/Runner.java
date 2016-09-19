@@ -7,14 +7,14 @@ import org.md2k.datadiagnostic.attachment.DelayedAttachment;
 import org.md2k.datadiagnostic.attachment.ImproperAttachment;
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.data.DataLoader;
-import org.md2k.datadiagnostic.episodes.AcceptableUnacceptableData;
-import org.md2k.datadiagnostic.episodes.FixedSizeWindow;
-import org.md2k.datadiagnostic.episodes.SessionMarker;
-import org.md2k.datadiagnostic.power.BatteryLevel;
+import org.md2k.datadiagnostic.marker.AcceptableUnacceptableData;
+import org.md2k.datadiagnostic.marker.FixedSizeWindowing;
+import org.md2k.datadiagnostic.marker.SessionMarker;
+import org.md2k.datadiagnostic.marker.power.BatteryLevel;
+import org.md2k.datadiagnostic.marker.wireless.PacketLoss;
+import org.md2k.datadiagnostic.marker.wireless.Physicaldisconnections;
 import org.md2k.datadiagnostic.struct.DataPoints;
 import org.md2k.datadiagnostic.util.Util;
-import org.md2k.datadiagnostic.wireless.PacketLoss;
-import org.md2k.datadiagnostic.wireless.Physicaldisconnections;
 
 public class Runner {
 
@@ -24,52 +24,45 @@ public class Runner {
 
 	
 	DataLoader dataLoader;
-	List<DataPoints> dayStartData;
 	List<DataPoints> sensorData;
 	List<DataPoints> phoneBatteryData;
 	List<DataPoints> sensorBatteryData;
 	String outputPath;
-	long dayStartTime;
-	long dayEndTime;
 	
-	FixedSizeWindow fixedSizeWindows;
+	FixedSizeWindowing fixedSizeWindows;
 	double samplingRate;
 
 	public Runner(String streamName, String inputPath, String outputPath) {
-		//dayStartData = new ArrayList<DataPoints>();
 		sensorData = new ArrayList<DataPoints>();
 		phoneBatteryData = new ArrayList<DataPoints>();
 		sensorBatteryData = new ArrayList<DataPoints>();
-		fixedSizeWindows = new FixedSizeWindow();
+		fixedSizeWindows = new FixedSizeWindowing();
 		dataLoader = new DataLoader();
 		this.outputPath = outputPath;
 		
-		//SessionMarker sessionMarker = new SessionMarker();
-
-		// Calculate start and end time of a day (aka Active period)
-		//sessionMarker.getAllSessionStartEndTimes(fixedSizeWindows.windows, dayStartData);
-
+		long startTime = Util.getStartDayTime(1472052574671l);
+		long endTime = Util.getEndDayTime(1472052574671l);
+		
 		if (streamName.equals("battery")) {
-			dayStartData = dataLoader.loadCSV(inputPath+"start_day.csv");
 			phoneBatteryData = dataLoader.loadCSV(inputPath+"phone_battery.csv");
 			sensorBatteryData = dataLoader.loadCSV(inputPath+"chest_sensor_battery.csv");
 			fixedSizeWindows.createWindows(sensorData, DDT_PARAMETERS.WINDOW_SIZE);
 			runner();
 		}else if (streamName.equals("respiration")) {
+			phoneBatteryData = dataLoader.loadCSV(inputPath+"phone_battery.csv");
+			sensorBatteryData = dataLoader.loadCSV(inputPath+"chest_sensor_battery.csv");
+			
 			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
-			dayStartData = dataLoader.loadCSV(inputPath+"start_day.csv");
 			sensorData = dataLoader.loadCSV(inputPath+"resp.csv");
-			fixedSizeWindows.createWindows(sensorData, DDT_PARAMETERS.WINDOW_SIZE);
+			fixedSizeWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
 			runner();
 		} else if (streamName.equals("ecg")) {
 			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
-			dayStartData = dataLoader.loadCSV(inputPath+"start_day.csv");
 			sensorData = dataLoader.loadCSV(inputPath+"ecg.csv");
 			fixedSizeWindows.createWindows(sensorData, DDT_PARAMETERS.WINDOW_SIZE);
 			runner();
 		} else if (streamName.equals("acc_microsoft_band")) {
 			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
-			dayStartData = dataLoader.loadCSV(inputPath+"start_day.csv");
 			sensorData = dataLoader.loadCSV(inputPath+"acc_microsoft.csv");
 			fixedSizeWindows.createWindows(sensorData, DDT_PARAMETERS.WINDOW_SIZE);
 			runner();
@@ -77,36 +70,29 @@ public class Runner {
 	}
 
 	private void runner() {
-		// Class objects
-		//SessionMarker sessionMarker = new SessionMarker();
-
-		// Calculate start and end time of a day (aka Active period)
-		//sessionMarker.getAllSessionStartEndTimes(fixedSizeWindows.windows, dayStartData);
-
-		// loop over all the start and end sessions available
-		//for (int i = 0; i < sessionMarker.startEndTimes.size(); i++) 
-		{
 			diagnoseBatteryData();
 
 			diagnoseWirelessData();
 
 			diagnoseSensorData();
+			
 			System.out.println("-------------------------------------------------------");
-		}
-
 	}
 
+	public void phoneOnMarker(){
+		
+	}
 	public void diagnoseBatteryData() {
 		BatteryLevel batteryLevel = new BatteryLevel();
 		// calculate phone off time during active period
-		batteryLevel.phoneBatteryDown(phoneBatteryData);
-		batteryLevel.phonePoweredOff(phoneBatteryData);
+		batteryLevel.phoneBatteryDown(phoneBatteryData, fixedSizeWindows.blankWindows);
+		//batteryLevel.phonePoweredOff(phoneBatteryData);
 
 		System.out.println("Phone battery down: "+Util.dataPointsTime(batteryLevel.phoneBatteryDown)+" -- Phone battery off: "+Util.dataPointsTime(batteryLevel.phonePoweredOff));
 		
 		// calculate sensor off time during active period
-		batteryLevel.sensorBatteryDown(sensorBatteryData);
-		batteryLevel.sensorPoweredOff(sensorBatteryData);
+		batteryLevel.sensorBatteryDown(sensorBatteryData, fixedSizeWindows.blankWindows);
+		//batteryLevel.sensorPoweredOff(sensorBatteryData);
 		System.out.println("Sensor battery down: "+Util.dataPointsTime(batteryLevel.sensorBatteryDown)+" -- Sensor battery off: "+Util.dataPointsTime(batteryLevel.sensorPoweredOff));
 		
 	}
@@ -115,14 +101,14 @@ public class Runner {
 		Physicaldisconnections physicaldisconnections = new Physicaldisconnections();
 		PacketLoss packetLoss = new PacketLoss();
 		// calculate wireless disconnection
-		physicaldisconnections.getWirelessDisconnections(sensorData);
+		physicaldisconnections.getWirelessDisconnections(sensorData, fixedSizeWindows.blankWindows);
 		System.out.println(
 				"Wireless Disconnection: " + Util.dataPointsQualityTime(physicaldisconnections.wirelessDisconnections));
 
 		// calculate packet loss
 		// packet loss could be computed for both good and bad periods.
 		// Currently, it computers for bad quality data
-		packetLoss.countPacketLoss(fixedSizeWindows.windows, physicaldisconnections.wirelessDisconnections, 60, samplingRate);
+		packetLoss.countPacketLoss(fixedSizeWindows.blankWindows, 60, samplingRate);
 	}
 
 	public void diagnoseSensorData() {

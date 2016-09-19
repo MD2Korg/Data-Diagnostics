@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.md2k.datadiagnostic.struct.*;
 
@@ -184,5 +186,39 @@ public class Util {
 			}*/
 		}
 		return diffTimestamp;
+	}
+	
+	/**
+	 * 
+	 * @param currentTimestamp
+	 *            any timestamp of a day
+	 * @return 23:59:59 timestamp of currentTimestamp provided.
+	 */
+	public static long getEndDayTime(long currentTimestamp) {
+		Timestamp timestamp = new Timestamp(currentTimestamp);
+		Date date2 = new Date(timestamp.getTime());
+
+		date2.setHours(23);
+		date2.setMinutes(59);
+		date2.setSeconds(59);
+
+		return date2.getTime();
+	}
+
+	/**
+	 * 
+	 * @param currentTimestamp
+	 *            any timestamp of a day
+	 * @return 00:00:00 timestamp of currentTimestamp provided.
+	 */
+	public static long getStartDayTime(long currentTimestamp) {
+		Timestamp timestamp = new Timestamp(currentTimestamp);
+		Date date2 = new Date(timestamp.getTime());
+
+		date2.setHours(00);
+		date2.setMinutes(00);
+		date2.setSeconds(00);
+
+		return date2.getTime();
 	}
 }

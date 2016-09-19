@@ -1,46 +1,31 @@
-package org.md2k.datadiagnostic.episodes;
+package org.md2k.datadiagnostic.marker;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
+import org.md2k.datadiagnostic.signalquality.algorithms.VarianceBasedDataQuality;
+import org.md2k.datadiagnostic.struct.DataPointQuality;
 import org.md2k.datadiagnostic.struct.DataPoints;
 
 public class SensorOnBody {
 
-	public final List<DataPoints> phoneBattery;
-	public final List<DataPoints> autosenseBattery;
-	public final List<DataPoints> phoneOnEpisodes;
-	public final List<DataPoints> sensorOnEpisodes;
-
+	List<DataPointQuality> windowedData;
 	public SensorOnBody() {
-		phoneBattery = new ArrayList<DataPoints>();
-		autosenseBattery = new ArrayList<DataPoints>();
-		phoneOnEpisodes = new ArrayList<DataPoints>();
-		sensorOnEpisodes = new ArrayList<DataPoints>();
+		windowedData = new ArrayList<DataPointQuality>();
 	}
 	
-	public void getSensorOnEpisodes2(List<DataPoints> rawData, List<DataPoints> rawBatteryLevels) {
-		long sensorOnTime = 0, sensorOffTime = 0, startTime, endTime;
-
-		for (int i = 0; i < rawBatteryLevels.size() - 1; i++) {
-			if (rawData.get(i).getTimestamp() == rawBatteryLevels.get(i).getTimestamp()) {
-				startTime = rawBatteryLevels.get(i).getTimestamp();
-				endTime = rawBatteryLevels.get(i + 1).getTimestamp();
-				sensorOnTime += endTime - startTime;
-
-			} else {
-				startTime = rawBatteryLevels.get(i).getTimestamp();
-				endTime = rawBatteryLevels.get(i + 1).getTimestamp();
-				sensorOffTime += endTime - startTime;
-			}
+	public void sensorOnOffBodyMarker() {
+		VarianceBasedDataQuality varianceBasedDataQuality = new VarianceBasedDataQuality();
+		
+		for(int i=0;i<windowedData.size();i++){
+			windowedData.get(i).getDataPoints();
 		}
-		System.out.println("Sensor ON: " + sensorOnTime + " - Sensor OFF " + sensorOffTime);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void getSensorOnEpisodes(List<DataPoints> rawData, List<DataPoints> rawBatteryLevels) {
+	/*public void getSensorOnEpisodes(List<DataPoints> rawData, List<DataPoints> rawBatteryLevels) {
 		long sensorOnTime = 0, sensorOffTime = 0, startTime, endTime;
 
 		for (int i = 0; i < rawBatteryLevels.size() - 1; i++) {
@@ -77,5 +62,5 @@ public class SensorOnBody {
 				this.autosenseBattery.add(new DataPoints(rawData.get(i).getTimestamp(), rawData.get(i).getValue()));
 			}
 		}
-	}
+	}*/
 }
