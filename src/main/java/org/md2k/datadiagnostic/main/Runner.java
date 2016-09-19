@@ -11,6 +11,7 @@ import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.data.DataLoader;
 import org.md2k.datadiagnostic.marker.AcceptableUnacceptableData;
 import org.md2k.datadiagnostic.marker.FixedSizeWindowing;
+import org.md2k.datadiagnostic.marker.SensorSignalQualityMarker;
 import org.md2k.datadiagnostic.marker.SessionMarker;
 import org.md2k.datadiagnostic.marker.power.BatteryDataMarker;
 import org.md2k.datadiagnostic.marker.wireless.DataLossMarker;
@@ -66,28 +67,38 @@ public class Runner {
 	}
 
 	private void runner() {
-		markBatteryData();
-		markDataLoss();
-		dataQualityMarker();
+		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
+		SensorUnavailableMarker sensorUnavailable = new SensorUnavailableMarker();
+		SensorSignalQualityMarker sensorSignalQualityMarker = new SensorSignalQualityMarker();
+		
+		batteryDataMarker.phoneBatteryMarker(phoneBatteryData, staticWindows.blankWindows);
+		batteryDataMarker.sensorBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
+		
+		sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
+		
+		sensorSignalQualityMarker.markWindowsQulaity(sensorUnavailable.wirelessDisconnections, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		
+		//markDataLoss();
+		//dataQualityMarker();
 
 	}
 
-	public void markBatteryData() {
-		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
-		batteryDataMarker.phoneBatteryMarker(phoneBatteryData, staticWindows.blankWindows);
-		batteryDataMarker.sensorBatteryMarker(sensorBatteryData, staticWindows.blankWindows);
+	/*public void markBatteryData() {
+		
 	}
 
 	public void markDataLoss() {
-		SensorUnavailableMarker sensorUnavailable = new SensorUnavailableMarker();
-		DataLossMarker dataLossMarker = new DataLossMarker();
 		
-		sensorUnavailable.wirelessDisconnectionsMarker(sensorData, staticWindows.blankWindows);
-		dataLossMarker.packetLossMarker(staticWindows.blankWindows, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		//DataLossMarker dataLossMarker = new DataLossMarker();
+		
+		
+		//dataLossMarker.packetLossMarker(staticWindows.blankWindows, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 	}
 
 	public void dataQualityMarker() {
-
+		
+		
+		
 		AcceptableUnacceptableData activeInactiveEpisodes = new AcceptableUnacceptableData();
 		DelayedAttachment delayedAttachment = new DelayedAttachment();
 		ImproperAttachment improperAttachment = new ImproperAttachment();
@@ -106,5 +117,5 @@ public class Runner {
 		// Improper attachment/loose attachment
 		improperAttachment.getImproperAttachmentPeriods(staticWindows.windows);
 		System.out.println("Improper attachment: " + Util.dataPointsTime(improperAttachment.improperAttachment));
-	}
+	}*/
 }

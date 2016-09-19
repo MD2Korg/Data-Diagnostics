@@ -44,6 +44,7 @@ public class SensorUnavailableMarker {
 				}
 			}
 		}
+		wirelessDisconnections.addAll(blankWindows);
 	}
 
 }

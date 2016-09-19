@@ -41,6 +41,9 @@ public class DDT_PARAMETERS {
 	// the threshold then both will be merged in one larger window. Value is in milliseconds
 	public static final long MERGE_WINDOWS_THRESHOLD_TIME = 60000;
 	
+	//min 0 and max 1
+	public static final double MINIMUM_ACCEPTABLE_PACKET_LOSS = 0.33;
+	
 	//CSV OUTPUT
 	//turning this option on will generate output in CSV files. 1 = yes and 0=no
 	public static final int GENERATE_CSV_FILES = 1;

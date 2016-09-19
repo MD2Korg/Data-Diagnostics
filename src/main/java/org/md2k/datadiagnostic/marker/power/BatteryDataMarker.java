@@ -1,6 +1,9 @@
 package org.md2k.datadiagnostic.marker.power;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.text.html.HTMLDocument.HTMLReader.BlockAction;
 
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.configurations.METADATA;
@@ -9,6 +12,13 @@ import org.md2k.datadiagnostic.struct.DataPoints;
 
 public class BatteryDataMarker {
 
+	public final List<DataPointQuality> phoneBattery;
+	public final List<DataPointQuality> sensorBattery;
+	
+	public BatteryDataMarker(){
+		phoneBattery = new ArrayList<DataPointQuality>();
+		sensorBattery = new ArrayList<DataPointQuality>();
+	}
 
 	/**
 	 * 
@@ -56,7 +66,7 @@ public class BatteryDataMarker {
 				}
 			}
 		}
-
+		this.phoneBattery.addAll(blankWindows);
 	}
 
 	public void sensorBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
@@ -98,7 +108,7 @@ public class BatteryDataMarker {
 				}
 			}
 		}
-
+		this.sensorBattery.addAll(blankWindows);
 	}
 
 }

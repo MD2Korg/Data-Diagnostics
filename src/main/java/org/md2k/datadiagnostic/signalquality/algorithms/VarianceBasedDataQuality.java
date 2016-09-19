@@ -10,6 +10,8 @@ import javax.lang.model.element.VariableElement;
 
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.md2k.datadiagnostic.configurations.DATA_QUALITY;
+import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
+import org.md2k.datadiagnostic.configurations.METADATA;
 import org.md2k.datadiagnostic.struct.DataPoints;
 import org.md2k.datadiagnostic.util.Statistics;
 import org.md2k.datadiagnostic.util.Util;
@@ -44,15 +46,13 @@ public class VarianceBasedDataQuality  {
 
     private static final double RIP_VARIANCE_THRESHOLD = 1000; //0.00003 for microsoft band
     
-    public int currentQuality(List<DataPoints> timestampsAndValues) {
-    	//if(timestampsAndValues.get(0).getTimestamp()>=1470402484880l && timestampsAndValues.get(0).getTimestamp()<=1470402484880l)
-    	{
+    public int currentQuality(List<DataPoints> timestampsAndValues, long expectedSamples) {
     	List<Double> normalValues = new ArrayList<Double>();
     	List<Double> values = new ArrayList<Double>();
     	
-    	double expectedSample = timestampsAndValues.size()/(6*60);
-    	if(expectedSample<0.33){
-    		return DATA_QUALITY.DATA_LOST;
+    	double expectedSample = timestampsAndValues.size()/expectedSamples;
+    	if(expectedSample<DDT_PARAMETERS.MINIMUM_ACCEPTABLE_PACKET_LOSS){
+    		return METADATA.DATA_LOST;
     	}
     	if (timestampsAndValues.size() == 0) {
             return DATA_QUALITY.SENSOR_OFF;
@@ -70,10 +70,9 @@ public class VarianceBasedDataQuality  {
     	double variance = statistics2.getVariance();
        	
     	if(variance<RIP_VARIANCE_THRESHOLD){
-    		return DATA_QUALITY.SENSOR_OFF_BODY;
+    		return METADATA.SENSOR_OFF_BODY;
 		}
-    	}
-    	return DATA_QUALITY.GOOD;
+    	return METADATA.SENSOR_ON_BODY;
     	
     }
 
