@@ -10,10 +10,10 @@ import org.md2k.datadiagnostic.struct.DataPointQuality;
 import org.md2k.datadiagnostic.struct.DataPoints;
 
 public class DataLossMarker {
-	public long totalLostPackets;
+	public final List<DataPointQuality> dataLoss;
 
 	public DataLossMarker() {
-		totalLostPackets = 0;
+		dataLoss = new ArrayList<DataPointQuality>();
 	}
 
 	/**
@@ -22,7 +22,7 @@ public class DataLossMarker {
 	 * 
 	 * @param windows
 	 *            timestamp windows marked with quality labels
-	 * @param wirelessDisconnections
+	 * @param markedWindows
 	 *            timestamp windows of {@link SensorUnavailableMarker}
 	 * @param windowSize
 	 *            in milliseconds
@@ -37,17 +37,21 @@ public class DataLossMarker {
 		long expectedSamples = 0;
 		int size;
 
-		expectedSamples = (long) (windowSize * samplingRate);
+		expectedSamples = (long) ((windowSize/1000) * samplingRate);
 
 		for (int i = 0; i < blankWindows.size(); i++) {
-			if (blankWindows.get(i).getQuality() != METADATA.SENSOR_UNAVAILABLE) {
+			if (blankWindows.get(i).getQuality() == 999) {
 				size = blankWindows.get(i).getDataPoints().size();
-				if (expectedSamples > size) {
+				double actualSamples = (double)size/expectedSamples;
+				if(actualSamples<DDT_PARAMETERS.MINIMUM_ACCEPTABLE_PACKET_LOSS){
+					System.out.println(blankWindows.get(i).getDataPoints().get(0).getTimestamp());
 					blankWindows.get(i).setQuality(METADATA.DATA_LOST);
 				}
 			}
 
 		}
+		dataLoss.addAll(blankWindows);
+		
 		// check, window quality should be good
 		/*
 		 * size = blankWindows.get(i).getDataPoints().size(); startTime =

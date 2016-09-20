@@ -37,9 +37,11 @@ public class SensorUnavailableMarker {
 			if (timeDiff >= DDT_PARAMETERS.WIRELESS_DISCONNECTION) {
 				for (int j = 0; j < blankWindows.size() - 1; j++) {
 					startTime = blankWindows.get(j).getDataPoints().get(0).getTimestamp();
-
-					if (rawData.get(i).getTimestamp() <= startTime && rawData.get(i + 1).getTimestamp() > startTime) {
-						blankWindows.get(j).setQuality(METADATA.SENSOR_UNAVAILABLE);
+					if (blankWindows.get(j).getQuality() == 999) {
+						if (rawData.get(i).getTimestamp() <= startTime
+								&& rawData.get(i + 1).getTimestamp() > startTime) {
+							blankWindows.get(j).setQuality(METADATA.SENSOR_UNAVAILABLE);
+						}
 					}
 				}
 			}

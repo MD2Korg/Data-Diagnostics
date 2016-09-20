@@ -82,19 +82,21 @@ public class FixedSizeWindowing {
 		Math.round(totalMinutes);
 		for(int i=0;i<totalMinutes;i++){
 			long windowStartTime=startTime;
-			long windowEndTime = startTime+size;
+			 startTime = startTime+size;
 			
+			tempArray.add(new DataPoints(windowStartTime, 000)); 
 			for (int j = 0; j < sensorRawData.size(); j++) {
-				if(sensorRawData.get(j).getTimestamp()>=windowStartTime && sensorRawData.get(j).getTimestamp()<=windowEndTime){
+				if(sensorRawData.get(j).getTimestamp()>=windowStartTime && sensorRawData.get(j).getTimestamp()<=startTime){
 					tempArray.add(new DataPoints(sensorRawData.get(j).getTimestamp(), sensorRawData.get(j).getValue()));
 				}
 			}
-			//tempArray is empty then add empty start and end time
-			if(tempArray.isEmpty()){
-				tempArray.add(new DataPoints(windowStartTime, startTime));
-			}
+			tempArray.add(new DataPoints(startTime, 000));
 			
-			blankWindows.add(new DataPointQuality(tempArray, 999));
+			 if(!tempArray.isEmpty()){
+				 blankWindows.add(new DataPointQuality(tempArray, 999));
+			 }
+			tempArray.clear();
+			
 		}
 	}
 

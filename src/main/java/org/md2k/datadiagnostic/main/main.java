@@ -13,11 +13,11 @@ public class main {
 	 */
 	public static void main(String[] args) {
 		//System.out.println(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
-		String sensorType = "ecg";
-		String inputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/Shahin/data/merged/";
+		String sensorType = "respiration";
+		String inputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/Ali09192016/merged/";
 		String outputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/output/";
 		
-		Runner run = new Runner(sensorType, inputPath, outputPath);
+		new Runner(sensorType, inputPath, outputPath);
 
 	}
 }

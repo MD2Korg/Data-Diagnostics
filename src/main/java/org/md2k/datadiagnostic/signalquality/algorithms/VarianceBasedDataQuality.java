@@ -52,7 +52,7 @@ public class VarianceBasedDataQuality  {
     	
     	double expectedSample = timestampsAndValues.size()/expectedSamples;
     	if(expectedSample<DDT_PARAMETERS.MINIMUM_ACCEPTABLE_PACKET_LOSS){
-    		return METADATA.DATA_LOST;
+    		//return METADATA.DATA_LOST;
     	}
     	if (timestampsAndValues.size() == 0) {
             return DATA_QUALITY.SENSOR_OFF;
@@ -65,6 +65,7 @@ public class VarianceBasedDataQuality  {
     	Statistics statistics = new Statistics(values);
     	normalValues.addAll(statistics.StatisticalOutLierAnalysis());
 
+    	//Mark window as jerks if outliers are 70% of a window.
     	
     	Statistics statistics2 = new Statistics(normalValues);
     	double variance = statistics2.getVariance();

@@ -42,23 +42,28 @@ public class Runner {
 		dataLoader = new DataLoader();
 		this.outputPath = outputPath;
 
-		long startTime = Util.getStartDayTime(1472052574671l);
-		long endTime = Util.getEndDayTime(1472052574671l);
+		long startTime = Util.getStartDayTime(1474313586405l);
+		long endTime = Util.getEndDayTime(1474313586405l);
 
 		if (streamName.equals("respiration")) {
 			phoneBatteryData = dataLoader.loadCSV(inputPath + "phone_battery.csv");
 			sensorBatteryData = dataLoader.loadCSV(inputPath + "chest_sensor_battery.csv");
 
-			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
+			samplingRate = DDT_PARAMETERS.RESPIRATION_SAMPLING_RATE;
 			sensorData = dataLoader.loadCSV(inputPath + "resp.csv");
 			staticWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
 			runner();
 		} else if (streamName.equals("ecg")) {
+			phoneBatteryData = dataLoader.loadCSV(inputPath + "phone_battery.csv");
+			sensorBatteryData = dataLoader.loadCSV(inputPath + "chest_sensor_battery.csv");
+			
 			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
 			sensorData = dataLoader.loadCSV(inputPath + "ecg.csv");
 			staticWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
 			runner();
 		} else if (streamName.equals("acc_microsoft_band")) {
+			phoneBatteryData = dataLoader.loadCSV(inputPath + "phone_battery.csv");
+			
 			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
 			sensorData = dataLoader.loadCSV(inputPath + "acc_microsoft.csv");
 			staticWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
@@ -69,14 +74,20 @@ public class Runner {
 	private void runner() {
 		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
 		SensorUnavailableMarker sensorUnavailable = new SensorUnavailableMarker();
+		DataLossMarker dataLossMarker = new DataLossMarker();
 		SensorSignalQualityMarker sensorSignalQualityMarker = new SensorSignalQualityMarker();
 		
 		batteryDataMarker.phoneBatteryMarker(phoneBatteryData, staticWindows.blankWindows);
+		
 		batteryDataMarker.sensorBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
 		
 		sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
 		
-		sensorSignalQualityMarker.markWindowsQulaity(sensorUnavailable.wirelessDisconnections, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		dataLossMarker.packetLossMarker(sensorUnavailable.wirelessDisconnections, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		
+		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		Util.writeToCSV(sensorSignalQualityMarker.markedWindows, "new.txt");
+		//System.out.println(sensorSignalQualityMarker.markedWindows);
 		
 		//markDataLoss();
 		//dataQualityMarker();
