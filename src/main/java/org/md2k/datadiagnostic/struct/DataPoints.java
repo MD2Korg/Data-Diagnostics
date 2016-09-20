@@ -33,7 +33,7 @@ public class DataPoints  implements Comparable<DataPoints>{
 
 
     /**
-     * Copy Constructor
+     * Constructor
      *
      * @param other DataPointArray object
      */
@@ -42,27 +42,44 @@ public class DataPoints  implements Comparable<DataPoints>{
         this.timestamp = other.timestamp;
     }
 
-
+    /**
+     * @return long start timestamp of a window
+     */
     public long getTimestamp(){
 		return timestamp;
 	}
 	
+    /**
+     * @return double 
+     */
 	public double getValue(){
 		return value;
 	}
 	
+	/**
+	 * @return long end time stamp of a window
+	 */
 	public long getEndTimestamp(){
 		return endTimestamp;
 	}
 	
+	/**
+	 * @param timestamp long
+	 */
 	public void setTimestamp(long timestamp){
 		this.timestamp = timestamp;
 	}
 	
+	/**
+	 * @param value {@link Double} 
+	 */
 	public void setValue(double value){
 		this.value = value;
 	}
 	
+	/**
+	 * @param endTimestamp {@link Long} end timestamp of a window
+	 */
 	public void setEndTimestamp(long endTimestamp){
 		 this.endTimestamp = endTimestamp;
 	}

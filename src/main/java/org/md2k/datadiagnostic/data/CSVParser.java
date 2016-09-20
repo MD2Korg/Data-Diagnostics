@@ -15,6 +15,12 @@ public class CSVParser implements Iterable<DataPoints> {
         this.data = new ArrayList<DataPoints>();
     }
 
+    /**
+     * Import data from a CSV file.
+     * 
+     * @param filename CSV file name.
+     * @return {@link DataPoints}
+     */
     public List<DataPoints> importData(String filename) {
 
         DataPoints tempPacket;

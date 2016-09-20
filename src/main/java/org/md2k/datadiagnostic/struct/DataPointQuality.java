@@ -1,52 +1,71 @@
 package org.md2k.datadiagnostic.struct;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import org.md2k.datadiagnostic.configurations.METADATA;
 
 public class DataPointQuality {
 
-	public DataPoints[] window;
-	public ArrayList<DataPoints> window2 = new ArrayList<DataPoints>();
+	public ArrayList<DataPoints> window = new ArrayList<DataPoints>();
 	public int metadata;
 
 	/**
 	 * DataPointQuality Constructor
 	 *
-	 * @param dpA
+	 * @param datapoints
 	 *            Time windows
 	 * @param quality
 	 *            int point value
 	 */
-	public DataPointQuality(DataPoints[] dpA, int metadata) {
+	/*public DataPointQuality(DataPoints[] datapoints, int metadata) {
 
-		this.window = dpA;
+		this.window = datapoints;
+		this.metadata = metadata;
+	}*/
+
+	/**
+	 * 
+	 * @param datapoints {@link DataPoints}
+	 * @param metadata {@link Integer} 
+	 */
+	public DataPointQuality(List<DataPoints> datapoints, int metadata) {
+
+		this.window.addAll(datapoints);
 		this.metadata = metadata;
 	}
 
-	public DataPointQuality(List<DataPoints> dpA, int metadata) {
-
-		this.window2.addAll(dpA);
-		this.metadata = metadata;
-	}
-
+	/**
+	 * 
+	 * @return {@link DataPoints}
+	 */
 	public ArrayList<DataPoints> getDataPoints() {
-		return window2;
+		return window;
 	}
 	
 	
 
+	/**
+	 * 
+	 * @return {@link Integer} metadata of a window
+	 * @see METADATA
+	 */
 	public int getQuality() {
 		return metadata;
 	}
 	
+	/**
+	 * 
+	 * @param metadata {@link Integer} metadata of a window
+	 * @see METADATA
+	 */
 	public void setQuality(int metadata) {
 		this.metadata = metadata;
 	}
 
 	@Override
 	public String toString() {
-		return window2.toString() + "" + metadata + "\n";
+		return window.toString() + " " + metadata + "\n";
 	}
 
 }

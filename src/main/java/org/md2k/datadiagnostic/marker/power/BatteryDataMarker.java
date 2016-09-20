@@ -21,15 +21,10 @@ public class BatteryDataMarker {
 	}
 
 	/**
+	 * This method checks at what time of a day phone was manually powered off or turned off due to low battery.
 	 * 
-	 * It will check at what time of a day the battery level was less than to
-	 * calculate phone-off episodes.
-	 * 
-	 * @param rawBatteryLevels
-	 * @param dayStartTime
-	 *            start time of a day
-	 * @param dayEndTime
-	 *            end time of a day
+	 * @param rawBatteryLevels {@link DataPoints}
+	 * @param blankWindows {@link DataPointQuality}
 	 */
 	public void phoneBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
 		long startTime, endTime;
@@ -74,11 +69,17 @@ public class BatteryDataMarker {
 		this.phoneBattery.addAll(blankWindows);
 	}
 
+	/**
+	 * This method checks at what time of a day sensor was manually powered off or turned off due to low battery.
+	 * 
+	 * @param rawBatteryLevels {@link DataPoints}
+	 * @param blankWindows {@link DataPointQuality}
+	 */
 	public void sensorBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
 		long startTime, endTime;
 		double voltageValue;
 		// iterate over battery levels to see if there is 0 battery level
-		for (int i = 0; i < blankWindows.size() - 1; i++) {
+		for (int i = 0; i < blankWindows.size(); i++) {
 
 			startTime = blankWindows.get(i).getDataPoints().get(0).getTimestamp();
 			endTime = blankWindows.get(i).getDataPoints().get(blankWindows.get(i).getDataPoints().size() - 1)
@@ -91,7 +92,7 @@ public class BatteryDataMarker {
 					voltageValue = (rawBatteryLevels.get(i).getValue() / 4096) * 3 * 2;
 					if (blankWindows.get(i).getQuality() == 999) {
 						if (rawBatteryLevels.get(j).getTimestamp() >= startTime
-								&& rawBatteryLevels.get(j).getTimestamp() < endTime) {
+								&& rawBatteryLevels.get(j).getTimestamp() <= endTime) {
 							break;
 						} else {
 							// only mark sensor battery down/off if phone was on

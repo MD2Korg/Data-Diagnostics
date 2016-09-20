@@ -17,88 +17,7 @@ import org.junit.experimental.theories.DataPoint;
 
 public class Util {
 
-	public static List<DataPointQuality> getDiffQualityWindows(List<DataPointQuality> windows, int quality) {
-		List<DataPointQuality> qualityWindows = new ArrayList<DataPointQuality>();
 
-		for (int i = 0; i < windows.size(); i++) {
-			if (windows.get(i).getQuality() == quality) {
-				qualityWindows.add(new DataPointQuality(windows.get(i).getDataPoints(), quality));
-			}
-		}
-		return qualityWindows;
-	}
-
-	public static void writeToCSV(List<DataPointQuality> windows, String fileName) {
-		
-		if(fileName.equals("")){
-			fileName = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/results/vari.txt";
-		}else{
-			fileName = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/results/"+fileName;
-		}
-		List<DataPoints> dp = new ArrayList<DataPoints>();
-		try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
-			for (int i = 0; i < windows.size(); i++) {
-
-				dp = windows.get(i).getDataPoints();
-				// for(int j=0;j<dp.size();j++)
-				{
-					writer.write(dp.get(0).getTimestamp() + ", " + dp.get(dp.size()-1).getTimestamp()+", "+windows.get(i).getQuality() + "\r");
-
-				}
-
-			}
-
-		} catch (UnsupportedEncodingException e) {
-
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public static void writeToCSV(ArrayList<DataPoints> windows, String fileName) {
-		if(fileName.equals("")){
-			fileName = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/results/vari.txt";
-		}else{
-			fileName = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/results/"+fileName;
-		}
-		//String fileName = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/ali804/results/quality_windows.txt";
-		List<DataPoints> dp = new ArrayList<DataPoints>();
-		try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
-			for (int i = 0; i < windows.size(); i++) {
-
-				// for(int j=0;j<dp.size();j++)
-				{
-
-					/*//human readable time and date
-					  Date startTime = new Date(windows.get(i).getTimestamp());
-					Date endTime = new Date(windows.get(i).getEndTimestamp());
-					
-					writer.write( startTime+ ", " + endTime + "\r");*/
-					
-					writer.write(windows.get(i).getTimestamp() + ", " + windows.get(i).getEndTimestamp() + "\r");
-
-				}
-
-			}
-
-		} catch (UnsupportedEncodingException e) {
-
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	/**
 	 * This method will sum all the timestamps stored in {@link DataPointQuality}
@@ -141,7 +60,7 @@ public class Util {
 	 * @param haystack {@link DataPoints} 
 	 * @param needle
 	 *            {@link DataPoints} 
-	 * @return 
+	 * @return {@link DataPoints}
 	 */
 	
 	public static List<DataPoints> compareTwoDP(List<DataPoints> haystack, List<DataPoints> needle) {
@@ -150,8 +69,6 @@ public class Util {
 		for(int i=0;i<haystack.size();i++){
 			
 			for(int j=0;j<needle.size();j++){
-				//System.out.println(haystack.get(i).getTimestamp()+" == "+needle.get(j).getTimestamp()+" ---- "+haystack.get(i).getEndTimestamp()+" == "+needle.get(j).getEndTimestamp());
-				//System.out.println();
 				if(haystack.get(i).equals(needle.get(j))){
 					tmp=0;
 					break;
@@ -166,27 +83,6 @@ public class Util {
 		return finalDP;
 	}
 
-	public static void checkDataPointExist(List<DataPoints> dp1, List<DataPoints> dp2) {
-
-	}
-	
-	/**
-	 * This method is equivalent to diff() method in Matlab
-	 * @param timestamp Array of timestamps
-	 * @return diffTimestamp		This value will contain the diffs of all the a double array
-	 * */
-	public static ArrayList<Double> FindDiffs(ArrayList<Double> values){
-		ArrayList<Double> diffTimestamp = new ArrayList<Double>();
-		
-		for(int i=0; i<values.size()-1; i++){
-			//Convert to minutes
-			diffTimestamp.add(Math.abs((values.get(i+1))-values.get(i)));
-			/*if(diffTimestamp[i]>10){
-				System.out.println("great val"+diffTimestamp[i]);
-			}*/
-		}
-		return diffTimestamp;
-	}
 	
 	/**
 	 * 

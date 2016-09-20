@@ -1,4 +1,4 @@
-package org.md2k.datadiagnostic.marker;
+package org.md2k.datadiagnostic.windowing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +11,7 @@ import org.md2k.datadiagnostic.signalquality.algorithms.*;
 import org.md2k.datadiagnostic.struct.*;
 
 /**
- * This will create fixed equal size windows of time-series data
- * @author Nasir Ali
- *
+ * Create fixed equal size windows of time-series data
  */
 public class FixedSizeWindowing {
 
@@ -27,53 +25,13 @@ public class FixedSizeWindowing {
 	}
 	
 	/**
-	 * Windowing function for DataPoint arrays
-	 *
-	 * @param data
-	 *            Input data array
-	 * @param size
-	 *            Time window size in milliseconds
-	 * @return ArrayList of data split by size
-	 */
-	public void createWindows(List<DataPoints> data, long size) {
-		long startTime, endTime;
-		List<DataPoints> tempArray = new ArrayList<DataPoints>();
-		startTime = data.get(0).getTimestamp();
-		endTime = data.get(0).getTimestamp() + size;
-
-		List<Integer> temp1 = new ArrayList<Integer>();
-
-		for (int i = 0; i < data.size(); i++) {
-
-			if (data.get(i).getTimestamp() >= startTime && data.get(i).getTimestamp() < endTime) {
-				tempArray.add(new DataPoints(data.get(i).getTimestamp(), data.get(i).getValue()));
-				temp1.add((int) data.get(i).getValue());
-				if (i == data.size() - 1) {
-					windows.add(new DataPointQuality(tempArray, 999));
-				}
-			} else {
-				windows.add(new DataPointQuality(tempArray, 999));
-				startTime = data.get(i).getTimestamp();
-				endTime = data.get(i).getTimestamp() + size;
-				tempArray.clear();
-				tempArray.add(new DataPoints(data.get(i).getTimestamp(), data.get(i).getValue()));
-				if (i == data.size() - 1) {
-					windows.add(new DataPointQuality(tempArray, 999));
-				}
-				temp1.clear();
-			}
-		}
-	}
-	
-	/**
-	 * This method will create n number of blank windows for 24 hours period.
-	 * @param sensorData 
-	 *
-	 * @param data
-	 *            Input data array
-	 * @param size
-	 *            Time window size in milliseconds
-	 * @return ArrayList of data split by size
+	 * This method will create n number of blank windows for 24 hours period
+	 * and assign data to a window if there is any.
+	 * 
+	 * @param sensorRawData {@link DataPoints}
+	 * @param startTime long start time of a day
+	 * @param endTime long end time of a day
+	 * @param size long size of a window in milliseconds
 	 */
 	public void blankWindows(List<DataPoints> sensorRawData, long startTime, long endTime, long size) {
 		List<DataPoints> tempArray = new ArrayList<DataPoints>();
