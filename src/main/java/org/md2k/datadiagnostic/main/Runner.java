@@ -6,6 +6,7 @@ import java.util.List;
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.data.CSVExporter;
 import org.md2k.datadiagnostic.data.DataLoader;
+import org.md2k.datadiagnostic.marker.SensorOffBodyMarker;
 import org.md2k.datadiagnostic.marker.SensorSignalQualityMarker;
 import org.md2k.datadiagnostic.marker.SensorUnavailable;
 import org.md2k.datadiagnostic.marker.power.BatteryDataMarker;
@@ -76,6 +77,7 @@ public class Runner {
 		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
 		SensorUnavailableMarker sensorUnavailable = new SensorUnavailableMarker();
 		SensorUnavailable sensorUnavailable2 = new SensorUnavailable();
+		SensorOffBodyMarker bodyMarker = new SensorOffBodyMarker();
 		DataLossMarker dataLossMarker = new DataLossMarker();
 		SensorSignalQualityMarker sensorSignalQualityMarker = new SensorSignalQualityMarker();
 		
@@ -85,9 +87,10 @@ public class Runner {
 		
 		sensorUnavailable2.wirelessDC(batteryDataMarker.sensorBattery);
 		
+		bodyMarker.improperOrNoAttachment(sensorUnavailable2.sensorUnavailable);
 		//sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
 		
-		dataLossMarker.packetLossMarker(sensorUnavailable2.sensorUnavailable, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		dataLossMarker.packetLossMarker(bodyMarker.improperOrNoAttachment, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		
 		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		
