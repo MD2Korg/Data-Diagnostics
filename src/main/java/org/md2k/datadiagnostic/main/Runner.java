@@ -7,6 +7,7 @@ import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.data.CSVExporter;
 import org.md2k.datadiagnostic.data.DataLoader;
 import org.md2k.datadiagnostic.marker.SensorSignalQualityMarker;
+import org.md2k.datadiagnostic.marker.SensorUnavailable;
 import org.md2k.datadiagnostic.marker.power.BatteryDataMarker;
 import org.md2k.datadiagnostic.marker.wireless.DataLossMarker;
 import org.md2k.datadiagnostic.marker.wireless.SensorUnavailableMarker;
@@ -74,6 +75,7 @@ public class Runner {
 		CSVExporter csvExporter = new CSVExporter();
 		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
 		SensorUnavailableMarker sensorUnavailable = new SensorUnavailableMarker();
+		SensorUnavailable sensorUnavailable2 = new SensorUnavailable();
 		DataLossMarker dataLossMarker = new DataLossMarker();
 		SensorSignalQualityMarker sensorSignalQualityMarker = new SensorSignalQualityMarker();
 		
@@ -81,9 +83,11 @@ public class Runner {
 		
 		batteryDataMarker.sensorBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
 		
-		sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
+		sensorUnavailable2.wirelessDC(batteryDataMarker.sensorBattery);
 		
-		dataLossMarker.packetLossMarker(sensorUnavailable.wirelessDisconnections, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		//sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
+		
+		dataLossMarker.packetLossMarker(sensorUnavailable2.sensorUnavailable, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		
 		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		
@@ -105,9 +109,9 @@ public class Runner {
 		
 		batteryDataMarker.sensorBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
 		
-		sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
+		//sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
 		
-		dataLossMarker.packetLossMarker(sensorUnavailable.wirelessDisconnections, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		dataLossMarker.packetLossMarker(batteryDataMarker.sensorBattery, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		
 		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		

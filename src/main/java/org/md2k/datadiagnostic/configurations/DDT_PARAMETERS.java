@@ -5,8 +5,9 @@ public class DDT_PARAMETERS {
 	// Initial window size in milliseconds
 	public static final int WINDOW_SIZE = 60000;
 
-	// time in milliseconds
-	public static final int WIRELESS_DISCONNECTION = 30000;
+	// This is the variance value set to distinguish between wireless disconnect and battery off/down
+	public static final int WIRELESS_DISCONNECTION = 5000;
+	
 	// Value is in percentage of battery remaining. For example, 1 means 1%
 	// battery remains. Min=0 and Max=100
 	// It is used to calculate whether phone was off due to battery down or was

@@ -16,8 +16,8 @@ public class DataPoints  implements Comparable<DataPoints>{
      * @param value a value corresponding to a timestamp
      */
     public DataPoints(long timestamp, double value) {
-        this.value = value;
         this.timestamp = timestamp;
+        this.value = value;
     }
     
     /**
@@ -89,7 +89,7 @@ public class DataPoints  implements Comparable<DataPoints>{
      */
     @Override
     public String toString() {
-        return "DP:(" + this.timestamp + "," + this.endTimestamp + ")";
+        return "DP:(" + this.timestamp + "," + this.value + ")";
     }
 
 

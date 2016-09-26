@@ -85,7 +85,7 @@ public class BatteryDataMarker {
 			endTime = blankWindows.get(i).getDataPoints().get(blankWindows.get(i).getDataPoints().size() - 1)
 					.getTimestamp();
 
-			int temp = 0;
+			int tmp1 = 0,tmp2 = 0;
 			for (int j = 0; j < rawBatteryLevels.size(); j++) {
 				if (rawBatteryLevels.get(j).getTimestamp() >= startTime) {
 					// ADC value to voltage
@@ -93,12 +93,16 @@ public class BatteryDataMarker {
 					if (blankWindows.get(i).getQuality() == 999) {
 						if (rawBatteryLevels.get(j).getTimestamp() >= startTime
 								&& rawBatteryLevels.get(j).getTimestamp() <= endTime) {
-							break;
+							tmp1++;
+							//15 seconds. It means at least 25% of a packet should have battery ON
+							if (tmp1 > 15) {
+								break;
+							}
 						} else {
 							// only mark sensor battery down/off if phone was on
-							temp++;
-							if (temp > 20) {
-
+							
+							tmp2++;
+							if (tmp2 > 40) {
 								// mark blankWindows as sensor battery down/off
 								if (voltageValue <= DDT_PARAMETERS.AUTOSENSE_BATTERY_DOWN) {
 									blankWindows.get(i).setQuality(METADATA.SENSOR_BATTERY_DOWN);
