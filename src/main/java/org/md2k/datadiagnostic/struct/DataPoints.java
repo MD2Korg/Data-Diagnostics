@@ -97,12 +97,12 @@ public class DataPoints  implements Comparable<DataPoints>{
 	@Override
 	public int compareTo(DataPoints o) {
 		// TODO Auto-generated method stub
-		 if (this.value == o.value && this.timestamp == o.timestamp) {
-	            return 0; //They are the same
-	        } else if (this.timestamp < o.timestamp) {
+		 if (this.timestamp < o.timestamp) {
 	            return -1; //"this" is before "o"
+	        }else if (this.timestamp > o.timestamp) {
+	            return 1; //"this" is before "o"
 	        } else {
-	            return 1; //"this" is after "o"
+	            return 0; //"this" is after "o"
 	        }
 	}
 	

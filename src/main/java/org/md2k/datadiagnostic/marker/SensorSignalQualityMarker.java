@@ -18,17 +18,14 @@ public class SensorSignalQualityMarker {
 	 * This method mark the windows with various quality labels. For example, sensor on body.
 	 * 
 	 * @param blankWindows {@link DataPointQuality}
-	 * @param windowSize int
-	 * @param samplingRate double
 	 */
-	public void markWindowsQulaity(List<DataPointQuality> blankWindows, int windowSize, double samplingRate) {
+	public void markWindowsQulaity(List<DataPointQuality> blankWindows) {
 		VarianceBasedDataQuality varianceBasedDataQuality = new VarianceBasedDataQuality();
 		int quality;
-		long expectedSamples = (long) (windowSize * samplingRate);
 		
 		for (int i = 0; i < blankWindows.size(); i++) {
 			if (blankWindows.get(i).getQuality() == 999) {
-				quality = varianceBasedDataQuality.dataQualityMarker(blankWindows.get(i).getDataPoints(),expectedSamples);
+				quality = varianceBasedDataQuality.dataQualityMarker(blankWindows.get(i).getDataPoints());
 				blankWindows.get(i).setQuality(quality);
 			}
 		}

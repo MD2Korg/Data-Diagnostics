@@ -3,7 +3,6 @@ package org.md2k.datadiagnostic.marker.power;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.BlockAction;
 
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.configurations.METADATA;
@@ -13,11 +12,13 @@ import org.md2k.datadiagnostic.struct.DataPoints;
 public class BatteryDataMarker {
 
 	public final List<DataPointQuality> phoneBattery;
-	public final List<DataPointQuality> sensorBattery;
+	public final List<DataPointQuality> autoSenseBattery;
+	public final List<DataPointQuality> motionSenseBattery;
 
 	public BatteryDataMarker() {
 		phoneBattery = new ArrayList<DataPointQuality>();
-		sensorBattery = new ArrayList<DataPointQuality>();
+		autoSenseBattery = new ArrayList<DataPointQuality>();
+		motionSenseBattery = new ArrayList<DataPointQuality>();
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class BatteryDataMarker {
 	 * @param rawBatteryLevels {@link DataPoints}
 	 * @param blankWindows {@link DataPointQuality}
 	 */
-	public void sensorBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
+	public void autoSenseBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
 		long startTime, endTime;
 		double voltageValue;
 		// iterate over battery levels to see if there is 0 battery level
@@ -95,14 +96,16 @@ public class BatteryDataMarker {
 								&& rawBatteryLevels.get(j).getTimestamp() <= endTime) {
 							tmp1++;
 							//15 seconds. It means at least 25% of a packet should have battery ON
-							if (tmp1 > 15) {
+							//if (tmp1 > 15) 
+							{
 								break;
 							}
 						} else {
 							// only mark sensor battery down/off if phone was on
 							
 							tmp2++;
-							if (tmp2 > 40) {
+							//if (tmp2 > 40) 
+							{
 								// mark blankWindows as sensor battery down/off
 								if (voltageValue <= DDT_PARAMETERS.AUTOSENSE_BATTERY_DOWN) {
 									blankWindows.get(i).setQuality(METADATA.SENSOR_BATTERY_DOWN);
@@ -117,7 +120,57 @@ public class BatteryDataMarker {
 				}
 			}
 		}
-		this.sensorBattery.addAll(blankWindows);
+		this.autoSenseBattery.addAll(blankWindows);
+	}
+	
+	/**
+	 * This method checks at what time of a day sensor was manually powered off or turned off due to low battery.
+	 * 
+	 * @param rawBatteryLevels {@link DataPoints}
+	 * @param blankWindows {@link DataPointQuality}
+	 */
+	public void motionSenseBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
+		long startTime, endTime;
+		// iterate over battery levels to see if there is 0 battery level
+		for (int i = 0; i < blankWindows.size(); i++) {
+
+			startTime = blankWindows.get(i).getDataPoints().get(0).getTimestamp();
+			endTime = blankWindows.get(i).getDataPoints().get(blankWindows.get(i).getDataPoints().size() - 1)
+					.getTimestamp();
+
+			int tmp1 = 0,tmp2 = 0;
+			for (int j = 0; j < rawBatteryLevels.size(); j++) {
+				if (rawBatteryLevels.get(j).getTimestamp() >= startTime) {
+					if (blankWindows.get(i).getQuality() == 999) {
+						if (rawBatteryLevels.get(j).getTimestamp() >= startTime
+								&& rawBatteryLevels.get(j).getTimestamp() <= endTime) {
+							tmp1++;
+							//15 seconds. It means at least 25% of a packet should have battery ON
+							//if (tmp1 > 15) 
+							{
+								break;
+							}
+						} else {
+							// only mark sensor battery down/off if phone was on
+							
+							tmp2++;
+							//if (tmp2 > 40) 
+							{
+								// mark blankWindows as sensor battery down/off
+								if (rawBatteryLevels.get(i).getValue() <= DDT_PARAMETERS.MOTIONSENSE_BATTERY_DOWN) {
+									blankWindows.get(i).setQuality(METADATA.SENSOR_BATTERY_DOWN);
+									break;
+								} else {
+									blankWindows.get(i).setQuality(METADATA.SENSOR_POWERED_OFF);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		this.motionSenseBattery.addAll(blankWindows);
 	}
 
 }

@@ -1,12 +1,5 @@
 package org.md2k.datadiagnostic.util;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;

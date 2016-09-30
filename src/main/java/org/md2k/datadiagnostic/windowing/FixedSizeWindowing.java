@@ -2,12 +2,6 @@ package org.md2k.datadiagnostic.windowing;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-
-import org.md2k.datadiagnostic.util.*;
-import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
-import org.md2k.datadiagnostic.signalquality.algorithms.*;
 import org.md2k.datadiagnostic.struct.*;
 
 /**
@@ -65,9 +59,9 @@ public class FixedSizeWindowing {
 	 * @param size Time difference between two windows to merge. For example, merge two windows if they are are 1 minute (size=60000) apart.
 	 * @return ArrayList<DataPoints> merged windows in larger windows
 	 */
-	public ArrayList<DataPoints> mergeDataPointsWindows(List<DataPoints> windows, long size) {
+	public List<DataPoints> mergeDataPointsWindows(List<DataPoints> windows, long size) {
 		List<Long> temp = new ArrayList<Long>();
-		ArrayList<DataPoints> mergedWindows = new ArrayList<DataPoints>();
+		List<DataPoints> mergedWindows = new ArrayList<DataPoints>();
 
 		if (windows.size() == 1) {
 			mergedWindows.add(new DataPoints(windows.get(0).getTimestamp(), windows.get(0).getEndTimestamp()));

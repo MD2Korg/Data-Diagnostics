@@ -7,7 +7,7 @@ import org.md2k.datadiagnostic.configurations.METADATA;
 
 public class DataPointQuality {
 
-	public ArrayList<DataPoints> window = new ArrayList<DataPoints>();
+	public List<DataPoints> window = new ArrayList<DataPoints>();
 	public int metadata;
 
 	/**
@@ -39,7 +39,7 @@ public class DataPointQuality {
 	 * 
 	 * @return {@link DataPoints}
 	 */
-	public ArrayList<DataPoints> getDataPoints() {
+	public List<DataPoints> getDataPoints() {
 		return window;
 	}
 	

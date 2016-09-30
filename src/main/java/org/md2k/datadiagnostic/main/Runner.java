@@ -26,99 +26,133 @@ public class Runner {
 	List<DataPoints> sensorData;
 	List<DataPoints> phoneBatteryData;
 	List<DataPoints> sensorBatteryData;
+	String inputPath;
+	String streamName;
 	String outputPath;
 
 	FixedSizeWindowing staticWindows;
 	double samplingRate;
 
-	public Runner(String streamName, String inputPath, String outputPath) {
+	public Runner(String inputPath, String outputPath) {
 		sensorData = new ArrayList<DataPoints>();
 		phoneBatteryData = new ArrayList<DataPoints>();
 		sensorBatteryData = new ArrayList<DataPoints>();
 		staticWindows = new FixedSizeWindowing();
 		dataLoader = new DataLoader();
+		this.streamName = DDT_PARAMETERS.STREAM_NAME;
 		this.outputPath = outputPath;
+		this.inputPath = inputPath;
 
 		//in future, get this information from a database
-		long startTime = Util.getStartDayTime(1474313586405l);
-		long endTime = Util.getEndDayTime(1474313586405l);
+		long startTime = Util.getStartDayTime(1475082489918l);
+		long endTime = Util.getEndDayTime(1475082489918l);
 
-		if (streamName.equals("respiration")) {
-			phoneBatteryData = dataLoader.loadCSV(inputPath + "phone_battery.csv");
-			sensorBatteryData = dataLoader.loadCSV(inputPath + "chest_sensor_battery.csv");
+		if (streamName.equals("rip")) {
+			phoneBatteryData = dataLoader.loadCSV(inputPath + "PHONE_BATTERY.csv");
+			sensorBatteryData = dataLoader.loadCSV(inputPath + "AUTOSENSE_BATTERY.csv");
 
 			samplingRate = DDT_PARAMETERS.RESPIRATION_SAMPLING_RATE;
-			sensorData = dataLoader.loadCSV(inputPath + "resp.csv");
+			sensorData = dataLoader.loadCSV(inputPath + "AUTOSENSE_RESPIRATION.csv");
 			staticWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
-			chestbandMarkers();
+			ripDiagnose();
 		} else if (streamName.equals("ecg")) {
-			phoneBatteryData = dataLoader.loadCSV(inputPath + "phone_battery.csv");
-			sensorBatteryData = dataLoader.loadCSV(inputPath + "chest_sensor_battery.csv");
+			phoneBatteryData = dataLoader.loadCSV(inputPath + "PHONE_BATTERY.csv");
+			sensorBatteryData = dataLoader.loadCSV(inputPath + "AUTOSENSE_BATTERY.csv");
 			
-			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
-			sensorData = dataLoader.loadCSV(inputPath + "ecg.csv");
+			samplingRate = DDT_PARAMETERS.ECG_SAMPLING_RATE;
+			sensorData = dataLoader.loadCSV(inputPath + "AUTOSENSE_ECG.csv");
 			staticWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
-			chestbandMarkers();
+			ecgDiagnose();
+		}else if (streamName.equals("motionsense")) {
+			phoneBatteryData = dataLoader.loadCSV(inputPath + "PHONE_BATTERY.csv");
+			sensorBatteryData = dataLoader.loadCSV(inputPath + "MOTION_SENSE_BATTERY.csv");
+			
+			samplingRate = DDT_PARAMETERS.MOTIONSENSE_SAMPLING_RATE;
+			sensorData = dataLoader.loadWristCSV(inputPath + "MOTION_SENSE_ACCELEROMETER.csv");
+			staticWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
+			motionsenseWristBandDiagnose();
 		} else if (streamName.equals("microsoft_band")) {
-			phoneBatteryData = dataLoader.loadCSV(inputPath + "phone_battery.csv");
+			phoneBatteryData = dataLoader.loadCSV(inputPath + "PHONE_BATTERY.csv");
+			sensorBatteryData = dataLoader.loadCSV(inputPath + "MOTION_SENSE_BATTERY.csv");
 			
-			samplingRate = DDT_PARAMETERS.AUTOSENSE_SAMPLING_RATE;
-			sensorData = dataLoader.loadCSV(inputPath + "acc_microsoft.csv");
+			samplingRate = DDT_PARAMETERS.MOTIONSENSE_SAMPLING_RATE;
+			sensorData = dataLoader.loadWristCSV(inputPath + "MICROSOFT_ACCELEROMETER.csv");
 			staticWindows.blankWindows(sensorData, startTime, endTime, DDT_PARAMETERS.WINDOW_SIZE);
-			wristBandMarkers();
+			motionsenseWristBandDiagnose();
 		}
 	}
 
 	/**
 	 * This method is responsible to execute data diagnostic markers for chest band
 	 */
-	private void chestbandMarkers() {
+	private void ripDiagnose() {
 		CSVExporter csvExporter = new CSVExporter();
 		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
-		SensorUnavailableMarker sensorUnavailable = new SensorUnavailableMarker();
-		SensorUnavailable sensorUnavailable2 = new SensorUnavailable();
+		SensorUnavailable sensorUnavailable = new SensorUnavailable();
 		SensorOffBodyMarker bodyMarker = new SensorOffBodyMarker();
 		DataLossMarker dataLossMarker = new DataLossMarker();
 		SensorSignalQualityMarker sensorSignalQualityMarker = new SensorSignalQualityMarker();
 		
 		batteryDataMarker.phoneBatteryMarker(phoneBatteryData, staticWindows.blankWindows);
 		
-		batteryDataMarker.sensorBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
+		batteryDataMarker.autoSenseBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
 		
-		sensorUnavailable2.wirelessDC(batteryDataMarker.sensorBattery);
+		sensorUnavailable.autosenseWirelessDC(this.inputPath, batteryDataMarker.autoSenseBattery);
 		
-		bodyMarker.improperOrNoAttachment(sensorUnavailable2.sensorUnavailable);
-		//sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
+		bodyMarker.improperOrNoAttachmentRIP(this.inputPath, this.streamName, sensorUnavailable.sensorUnavailable);
 		
 		dataLossMarker.packetLossMarker(bodyMarker.improperOrNoAttachment, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		
-		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss);
 		
-		csvExporter.writeToCSV(sensorSignalQualityMarker.markedWindows, this.outputPath, "new.txt");
+		csvExporter.writeDataPointQualityToCSV(sensorSignalQualityMarker.markedWindows, this.outputPath, "new.txt");
 
 	}
 	
-	/**
-	 * This method is responsible to execute data diagnostic markers for wrist band
-	 */
-	private void wristBandMarkers() {
+	private void ecgDiagnose() {
 		CSVExporter csvExporter = new CSVExporter();
 		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
-		SensorUnavailableMarker sensorUnavailable = new SensorUnavailableMarker();
+		SensorUnavailable sensorUnavailable = new SensorUnavailable();
+		SensorOffBodyMarker bodyMarker = new SensorOffBodyMarker();
 		DataLossMarker dataLossMarker = new DataLossMarker();
 		SensorSignalQualityMarker sensorSignalQualityMarker = new SensorSignalQualityMarker();
 		
 		batteryDataMarker.phoneBatteryMarker(phoneBatteryData, staticWindows.blankWindows);
 		
-		batteryDataMarker.sensorBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
+		batteryDataMarker.autoSenseBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
 		
-		//sensorUnavailable.wirelessDisconnectionsMarker(sensorData, batteryDataMarker.sensorBattery);
+		sensorUnavailable.autosenseWirelessDC(this.inputPath, batteryDataMarker.autoSenseBattery);
 		
-		dataLossMarker.packetLossMarker(batteryDataMarker.sensorBattery, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		bodyMarker.improperOrNoAttachmentECG(sensorUnavailable.sensorUnavailable);
 		
-		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		dataLossMarker.packetLossMarker(bodyMarker.improperOrNoAttachment, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
 		
-		csvExporter.writeToCSV(sensorSignalQualityMarker.markedWindows, this.outputPath, "new.txt");
+		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss);
+		
+		csvExporter.writeDataPointQualityToCSV(sensorSignalQualityMarker.markedWindows, this.outputPath, "new.txt");
 
 	}
+	
+	private void motionsenseWristBandDiagnose() {
+		CSVExporter csvExporter = new CSVExporter();
+		BatteryDataMarker batteryDataMarker = new BatteryDataMarker();
+		SensorUnavailable sensorUnavailable = new SensorUnavailable();
+		SensorOffBodyMarker bodyMarker = new SensorOffBodyMarker();
+		DataLossMarker dataLossMarker = new DataLossMarker();
+		SensorSignalQualityMarker sensorSignalQualityMarker = new SensorSignalQualityMarker();
+		
+		batteryDataMarker.phoneBatteryMarker(phoneBatteryData, staticWindows.blankWindows);
+		
+		batteryDataMarker.motionSenseBatteryMarker(sensorBatteryData, batteryDataMarker.phoneBattery);
+		
+		sensorUnavailable.autosenseWirelessDC(this.inputPath, batteryDataMarker.motionSenseBattery);
+		
+		dataLossMarker.packetLossMarker(batteryDataMarker.motionSenseBattery, DDT_PARAMETERS.WINDOW_SIZE, samplingRate);
+		
+		sensorSignalQualityMarker.markWindowsQulaity(dataLossMarker.dataLoss);
+		
+		csvExporter.writeDataPointQualityToCSV(sensorSignalQualityMarker.markedWindows, this.outputPath, "new.txt");
+
+	}
+	
 }

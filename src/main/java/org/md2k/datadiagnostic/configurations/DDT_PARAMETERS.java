@@ -2,6 +2,10 @@ package org.md2k.datadiagnostic.configurations;
 
 public class DDT_PARAMETERS {
 
+	public static final String STREAM_NAME="microsoft_band";
+	// 0.00003 for microsoft band and for autosense 1000
+	public static final double VARIANCE_THRESHOLD=0.00003;
+	
 	// Initial window size in milliseconds
 	public static final int WINDOW_SIZE = 60000;
 
@@ -20,6 +24,7 @@ public class DDT_PARAMETERS {
 	// Value in battery voltage. Min=0 and Max=6
 	// It is used to calculate whether sensor was off due to battery down or was
 	// powered off
+	public static final int MOTIONSENSE_BATTERY_DOWN = 1;
 	public static final int AUTOSENSE_BATTERY_DOWN = 1;
 	public static final int AUTOSENSE_POWERED_OFF = 4;
 	// time difference between two timestampls of battery data
@@ -27,9 +32,9 @@ public class DDT_PARAMETERS {
 
 	// Sampling rate. This is used to calculate packet loss
 	public static final double RESPIRATION_SAMPLING_RATE = 21.33;
-	public static final double ECG_SAMPLING_RATE = 6;
+	public static final double ECG_SAMPLING_RATE = 64;
+	public static final double MOTIONSENSE_SAMPLING_RATE = 6;
 	public static final double MICROSOFT_BAND_SAMPLING_RATE = 6;
-	public static final double AUTOSENSE_SAMPLING_RATE = 6;
 
 	// Percentage of missing samples. This is used to calculate packet loss.
 	// Min=0 and Max=100

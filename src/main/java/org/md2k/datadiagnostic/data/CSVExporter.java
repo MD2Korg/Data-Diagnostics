@@ -22,7 +22,7 @@ public class CSVExporter {
 	 * @param outputFolderPath String
 	 * @param fileName String
 	 */
-	public static void writeToCSV(List<DataPointQuality> windows, String outputFolderPath, String fileName) {
+	public static void writeDataPointQualityToCSV(List<DataPointQuality> windows, String outputFolderPath, String fileName) {
 		
 		if(fileName.equals("")){
 			fileName = outputFolderPath+"temp.csv";
@@ -61,7 +61,7 @@ public class CSVExporter {
 	 * @param outputFolderPath String
 	 * @param fileName String
 	 */
-	public static void writeToCSV(ArrayList<DataPoints> windows, String outputFolderPath, String fileName) {
+	public static void writeDataPointsToCSV(List<DataPoints> windows, String outputFolderPath, String fileName) {
 		if(fileName.equals("")){
 			fileName = outputFolderPath+"temp.csv";
 		}else{

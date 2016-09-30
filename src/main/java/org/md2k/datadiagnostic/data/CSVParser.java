@@ -48,6 +48,35 @@ public class CSVParser implements Iterable<DataPoints> {
         Collections.sort(this.data);
         return this.data;
     }
+    
+    public List<DataPoints> importWristData(String filename) {
+
+        DataPoints tempPacket;
+
+        String[] tokens;
+       // double data;
+        long timestamp;
+
+        File file = new File(filename);
+        Scanner scanner;
+        try {
+            scanner = new Scanner(file);
+            while (scanner.hasNext()) {
+                tokens = scanner.nextLine().split(",");
+                double ts = Double.parseDouble(tokens[0]);
+                timestamp = (long) ts;
+                //data = Double.parseDouble(tokens[2]);
+                double magnitude = Math.sqrt(Math.pow(Double.parseDouble(tokens[2]), 2) + Math.pow(Double.parseDouble(tokens[3]), 2) + Math.pow(Double.parseDouble(tokens[4]), 2));
+                tempPacket = new DataPoints(timestamp, magnitude);
+                this.data.add(tempPacket);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Collections.sort(this.data);
+        return this.data;
+    }
+
 
 
     public void sort() {

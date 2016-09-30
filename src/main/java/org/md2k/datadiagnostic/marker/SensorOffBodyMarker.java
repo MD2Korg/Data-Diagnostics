@@ -17,40 +17,107 @@ public class SensorOffBodyMarker {
 		improperOrNoAttachment = new ArrayList<DataPointQuality>();
 	}
 
-	// load data and compute mandated of chest-based accelerometer (x, y, and z)
-
-	public void improperOrNoAttachment(List<DataPointQuality> windows) {
+	public void improperOrNoAttachmentRIP(String inputPath, String streamName, List<DataPointQuality> windows) {
 		DataLoader dataLoader = new DataLoader();
-		List<DataPoints> galvanicSkingResponse = new ArrayList<DataPoints>();
+
 		long startTime = 0, endTime = 0;
 		List<Double> tmp = new ArrayList<Double>();
 
-		galvanicSkingResponse = dataLoader.loadCSV(
-				"F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/Ali09192016/merged/AUTOSENSE_GALVANIC_SKIN_RESPONSE.csv");
-
 		for (int i = 0; i < windows.size(); i++) {
 			if (windows.get(i).getQuality() == 999) {
+
+				List<DataPoints> galvanicSkingResponse = new ArrayList<DataPoints>();
+				galvanicSkingResponse = dataLoader.loadCSV(inputPath + "AUTOSENSE_GSR.csv");
 				startTime = windows.get(i).getDataPoints().get(0).getTimestamp();
-				endTime = windows.get(i).getDataPoints().get(windows.get(i).getDataPoints().size()-1).getTimestamp();
+				endTime = windows.get(i).getDataPoints().get(windows.get(i).getDataPoints().size() - 1).getTimestamp();
 				for (int j = 0; j < galvanicSkingResponse.size(); j++) {
 					if (galvanicSkingResponse.get(j).getTimestamp() > startTime
 							&& galvanicSkingResponse.get(j).getTimestamp() < endTime) {
 						tmp.add(galvanicSkingResponse.get(j).getValue());
 					}
 				}
-				//if (tmp.size() != 0) 
-				{
-					Statistics statistics = new Statistics(tmp);
-					if (statistics.median() < 750) {
-						windows.get(i).setQuality(METADATA.IMPROPER_ATTACHMENT);
-					}
-					if (statistics.median() > 1800) {
-						windows.get(i).setQuality(METADATA.SENSOR_OFF_BODY);
-					}
+				Statistics statistics = new Statistics(tmp);
+				if (statistics.median() < 750) {
+					windows.get(i).setQuality(METADATA.IMPROPER_ATTACHMENT);
 				}
+				if (statistics.median() > 1800) {
+					windows.get(i).setQuality(METADATA.SENSOR_OFF_BODY);
+				}
+			}
+
+			tmp.clear();
+		}
+		improperOrNoAttachment.addAll(windows);
+	}
+
+	public void improperOrNoAttachmentMotionSense(List<DataPointQuality> windows) {
+		List<Double> tmp = new ArrayList<Double>();
+
+		for (int i = 0; i < windows.size(); i++) {
+			int badPeaks = 0;
+			if (windows.get(i).getQuality() == 999) {
+
+					for (int k = 0; k < windows.get(i).getDataPoints().size(); k++) {
+						tmp.add(windows.get(i).getDataPoints().get(k).getValue());
+						if (windows.get(i).getDataPoints().get(k).getValue() > 3999
+								|| windows.get(i).getDataPoints().get(k).getValue() < 50) {
+							badPeaks++;
+							tmp.add(windows.get(i).getDataPoints().get(k).getValue());
+						}
+
+					}
+					double avg = (badPeaks) / windows.get(i).getDataPoints().size();
+					if (avg > 0.95) {
+						windows.get(i).setQuality(METADATA.SENSOR_OFF_BODY);
+					} else {
+						Statistics statistics = new Statistics(tmp);
+						if (statistics.median() > 3800) {
+							windows.get(i).setQuality(METADATA.IMPROPER_ATTACHMENT);
+						}
+
+					}
+
 
 			}
 			tmp.clear();
+
+		}
+		improperOrNoAttachment.addAll(windows);
+	}
+
+	
+	
+	public void improperOrNoAttachmentECG(List<DataPointQuality> windows) {
+		List<Double> tmp = new ArrayList<Double>();
+
+		for (int i = 0; i < windows.size(); i++) {
+			int badPeaks = 0;
+			if (windows.get(i).getQuality() == 999) {
+
+					for (int k = 0; k < windows.get(i).getDataPoints().size(); k++) {
+						tmp.add(windows.get(i).getDataPoints().get(k).getValue());
+						if (windows.get(i).getDataPoints().get(k).getValue() > 3999
+								|| windows.get(i).getDataPoints().get(k).getValue() < 50) {
+							badPeaks++;
+							tmp.add(windows.get(i).getDataPoints().get(k).getValue());
+						}
+
+					}
+					double avg = (badPeaks) / windows.get(i).getDataPoints().size();
+					if (avg > 0.95) {
+						windows.get(i).setQuality(METADATA.SENSOR_OFF_BODY);
+					} else {
+						Statistics statistics = new Statistics(tmp);
+						if (statistics.median() > 3800) {
+							windows.get(i).setQuality(METADATA.IMPROPER_ATTACHMENT);
+						}
+
+					}
+
+
+			}
+			tmp.clear();
+
 		}
 		improperOrNoAttachment.addAll(windows);
 	}

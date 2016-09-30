@@ -16,4 +16,9 @@ public class DataLoader {
 		CSVParser csvParser = new CSVParser();	
 		return csvParser.importData(csvFileName);
 	}
+	
+	public List<DataPoints> loadWristCSV(String csvFileName){
+		CSVParser csvParser = new CSVParser();	
+		return csvParser.importWristData(csvFileName);
+	}
 }

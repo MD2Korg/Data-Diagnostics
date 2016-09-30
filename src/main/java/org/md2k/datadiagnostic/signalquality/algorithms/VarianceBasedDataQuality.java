@@ -3,7 +3,7 @@ package org.md2k.datadiagnostic.signalquality.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.configurations.METADATA;
 import org.md2k.datadiagnostic.struct.DataPoints;
 import org.md2k.datadiagnostic.util.Statistics;
@@ -11,9 +11,7 @@ import org.md2k.datadiagnostic.util.Statistics;
 
 public class VarianceBasedDataQuality {
 
-	private static final double RIP_VARIANCE_THRESHOLD = 1000; // 0.00003 for
-																// microsoft
-																// band
+	 // 0.00003 for microsoft band
 
 	/**
 	 * This method uses variance to evaluate the quality of signals. 
@@ -22,7 +20,7 @@ public class VarianceBasedDataQuality {
 	 * @param expectedSamples long
 	 * @return int data quality
 	 */
-	public int dataQualityMarker(List<DataPoints> timestampsAndValues, long expectedSamples) {
+	public int dataQualityMarker(List<DataPoints> timestampsAndValues) {
 		List<Double> normalValues = new ArrayList<Double>();
 		List<Double> values = new ArrayList<Double>();
 
@@ -39,7 +37,7 @@ public class VarianceBasedDataQuality {
 		Statistics statistics2 = new Statistics(normalValues);
 		double variance = statistics2.getVariance();
 
-		if (variance < RIP_VARIANCE_THRESHOLD) {
+		if (variance < DDT_PARAMETERS.VARIANCE_THRESHOLD) {
 			return METADATA.SENSOR_OFF_BODY;
 		}
 		return METADATA.SENSOR_ON_BODY;
