@@ -6,11 +6,11 @@ import java.util.List;
 import org.md2k.datadiagnostic.signalquality.algorithms.VarianceBasedDataQuality;
 import org.md2k.datadiagnostic.struct.DataPointQuality;
 
-public class SensorSignalQualityMarker {
+public class SensorDataQualityMarker {
 
 	public final List<DataPointQuality> markedWindows;
 
-	public SensorSignalQualityMarker() {
+	public SensorDataQualityMarker() {
 		markedWindows = new ArrayList<DataPointQuality>();
 	}
 	

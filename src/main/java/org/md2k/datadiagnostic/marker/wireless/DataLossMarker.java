@@ -8,10 +8,10 @@ import org.md2k.datadiagnostic.configurations.METADATA;
 import org.md2k.datadiagnostic.struct.DataPointQuality;
 
 public class DataLossMarker {
-	public final List<DataPointQuality> dataLoss;
+	public final List<DataPointQuality> markedWindows;
 
 	public DataLossMarker() {
-		dataLoss = new ArrayList<DataPointQuality>();
+		markedWindows = new ArrayList<DataPointQuality>();
 	}
 
 	/**
@@ -21,7 +21,7 @@ public class DataLossMarker {
 	 * @param windowSize double
 	 * @param samplingRate double
 	 */
-	public void packetLossMarker(List<DataPointQuality> blankWindows, double windowSize, double samplingRate) {
+	public void packetLoss(List<DataPointQuality> blankWindows, double windowSize, double samplingRate) {
 		long expectedSamples = 0;
 		int size;
 
@@ -37,7 +37,7 @@ public class DataLossMarker {
 			}
 
 		}
-		dataLoss.addAll(blankWindows);
+		markedWindows.addAll(blankWindows);
 	}
 
 }

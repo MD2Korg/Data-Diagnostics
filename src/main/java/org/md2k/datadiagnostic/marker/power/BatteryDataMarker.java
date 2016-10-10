@@ -3,7 +3,6 @@ package org.md2k.datadiagnostic.marker.power;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.configurations.METADATA;
 import org.md2k.datadiagnostic.struct.DataPointQuality;
@@ -11,21 +10,20 @@ import org.md2k.datadiagnostic.struct.DataPoints;
 
 public class BatteryDataMarker {
 
-	public final List<DataPointQuality> phoneBattery;
-	public final List<DataPointQuality> autoSenseBattery;
-	public final List<DataPointQuality> motionSenseBattery;
+	public final List<DataPointQuality> markedWindows;
 
 	public BatteryDataMarker() {
-		phoneBattery = new ArrayList<DataPointQuality>();
-		autoSenseBattery = new ArrayList<DataPointQuality>();
-		motionSenseBattery = new ArrayList<DataPointQuality>();
+		markedWindows = new ArrayList<DataPointQuality>();
 	}
 
 	/**
-	 * This method checks at what time of a day phone was manually powered off or turned off due to low battery.
+	 * This method checks at what time of a day phone was manually powered off
+	 * or turned off due to low battery.
 	 * 
-	 * @param rawBatteryLevels {@link DataPoints}
-	 * @param blankWindows {@link DataPointQuality}
+	 * @param rawBatteryLevels
+	 *            {@link DataPoints}
+	 * @param blankWindows
+	 *            {@link DataPointQuality}
 	 */
 	public void phoneBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
 		long startTime, endTime;
@@ -36,47 +34,49 @@ public class BatteryDataMarker {
 			endTime = blankWindows.get(i).getDataPoints().get(blankWindows.get(i).getDataPoints().size() - 1)
 					.getTimestamp();
 
-			int temp = 0;
-			int temp2 = 0;
+			int temp = 0, temp2 = 0;
 			for (int j = 0; j < rawBatteryLevels.size(); j++) {
 				if (rawBatteryLevels.get(j).getTimestamp() >= startTime) {
 					if (rawBatteryLevels.get(j).getTimestamp() >= startTime
 							&& rawBatteryLevels.get(j).getTimestamp() <= endTime) {
-						temp2=1;
+						temp2 = 1;
 						break;
 					} else {
-						// this temp will check that at least 33% of the time
-						// battery data wasn't available
 						temp++;
+						// at least 33% of the time battery data wasn't
+						// available
 						if (temp > 20) {
 							// mark blankWindows as phone battery down
 							if (rawBatteryLevels.get(j).getValue() <= DDT_PARAMETERS.PHONE_BATTERY_DOWN) {
 								blankWindows.get(i).setQuality(METADATA.PHONE_BATTERY_DOWN);
-								temp2=1;
+								temp2 = 1;
 								break;
 							} else {
 								blankWindows.get(i).setQuality(METADATA.PHONE_POWERED_OFF);
-								temp2=1;
+								temp2 = 1;
 								break;
 							}
 						}
 					}
 				}
 			}
-			if(temp2==0){
+			if (temp2 == 0) {
 				blankWindows.get(i).setQuality(METADATA.PHONE_POWERED_OFF);
 			}
 		}
-		this.phoneBattery.addAll(blankWindows);
+		this.markedWindows.addAll(blankWindows);
 	}
 
 	/**
-	 * This method checks at what time of a day sensor was manually powered off or turned off due to low battery.
+	 * This method checks at what time of a day sensor was manually powered off
+	 * or turned off due to low battery.
 	 * 
-	 * @param rawBatteryLevels {@link DataPoints}
-	 * @param blankWindows {@link DataPointQuality}
+	 * @param rawBatteryLevels
+	 *            {@link DataPoints}
+	 * @param blankWindows
+	 *            {@link DataPointQuality}
 	 */
-	public void autoSenseBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
+	public void senseBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
 		long startTime, endTime;
 		double voltageValue;
 		// iterate over battery levels to see if there is 0 battery level
@@ -86,7 +86,6 @@ public class BatteryDataMarker {
 			endTime = blankWindows.get(i).getDataPoints().get(blankWindows.get(i).getDataPoints().size() - 1)
 					.getTimestamp();
 
-			int tmp1 = 0,tmp2 = 0;
 			for (int j = 0; j < rawBatteryLevels.size(); j++) {
 				if (rawBatteryLevels.get(j).getTimestamp() >= startTime) {
 					// ADC value to voltage
@@ -94,40 +93,32 @@ public class BatteryDataMarker {
 					if (blankWindows.get(i).getQuality() == 999) {
 						if (rawBatteryLevels.get(j).getTimestamp() >= startTime
 								&& rawBatteryLevels.get(j).getTimestamp() <= endTime) {
-							tmp1++;
-							//15 seconds. It means at least 25% of a packet should have battery ON
-							//if (tmp1 > 15) 
-							{
-								break;
-							}
+							break;
 						} else {
-							// only mark sensor battery down/off if phone was on
-							
-							tmp2++;
-							//if (tmp2 > 40) 
-							{
-								// mark blankWindows as sensor battery down/off
-								if (voltageValue <= DDT_PARAMETERS.AUTOSENSE_BATTERY_DOWN) {
-									blankWindows.get(i).setQuality(METADATA.SENSOR_BATTERY_DOWN);
-									break;
-								} else {
-									blankWindows.get(i).setQuality(METADATA.SENSOR_POWERED_OFF);
-									break;
-								}
+							// mark blankWindows as sensor battery down/off
+							if (voltageValue <= DDT_PARAMETERS.AUTOSENSE_BATTERY_DOWN) {
+								blankWindows.get(i).setQuality(METADATA.SENSOR_BATTERY_DOWN);
+								break;
+							} else {
+								blankWindows.get(i).setQuality(METADATA.SENSOR_POWERED_OFF);
+								break;
 							}
 						}
 					}
 				}
 			}
 		}
-		this.autoSenseBattery.addAll(blankWindows);
+		this.markedWindows.addAll(blankWindows);
 	}
-	
+
 	/**
-	 * This method checks at what time of a day sensor was manually powered off or turned off due to low battery.
+	 * This method checks at what time of a day sensor was manually powered off
+	 * or turned off due to low battery.
 	 * 
-	 * @param rawBatteryLevels {@link DataPoints}
-	 * @param blankWindows {@link DataPointQuality}
+	 * @param rawBatteryLevels
+	 *            {@link DataPoints}
+	 * @param blankWindows
+	 *            {@link DataPointQuality}
 	 */
 	public void motionSenseBatteryMarker(List<DataPoints> rawBatteryLevels, List<DataPointQuality> blankWindows) {
 		long startTime, endTime;
@@ -138,39 +129,27 @@ public class BatteryDataMarker {
 			endTime = blankWindows.get(i).getDataPoints().get(blankWindows.get(i).getDataPoints().size() - 1)
 					.getTimestamp();
 
-			int tmp1 = 0,tmp2 = 0;
 			for (int j = 0; j < rawBatteryLevels.size(); j++) {
 				if (rawBatteryLevels.get(j).getTimestamp() >= startTime) {
 					if (blankWindows.get(i).getQuality() == 999) {
 						if (rawBatteryLevels.get(j).getTimestamp() >= startTime
 								&& rawBatteryLevels.get(j).getTimestamp() <= endTime) {
-							tmp1++;
-							//15 seconds. It means at least 25% of a packet should have battery ON
-							//if (tmp1 > 15) 
-							{
-								break;
-							}
+							break;
 						} else {
-							// only mark sensor battery down/off if phone was on
-							
-							tmp2++;
-							//if (tmp2 > 40) 
-							{
-								// mark blankWindows as sensor battery down/off
-								if (rawBatteryLevels.get(i).getValue() <= DDT_PARAMETERS.MOTIONSENSE_BATTERY_DOWN) {
-									blankWindows.get(i).setQuality(METADATA.SENSOR_BATTERY_DOWN);
-									break;
-								} else {
-									blankWindows.get(i).setQuality(METADATA.SENSOR_POWERED_OFF);
-									break;
-								}
+							// mark blankWindows as sensor battery down/off
+							if (rawBatteryLevels.get(i).getValue() <= DDT_PARAMETERS.MOTIONSENSE_BATTERY_DOWN) {
+								blankWindows.get(i).setQuality(METADATA.SENSOR_BATTERY_DOWN);
+								break;
+							} else {
+								blankWindows.get(i).setQuality(METADATA.SENSOR_POWERED_OFF);
+								break;
 							}
 						}
 					}
 				}
 			}
 		}
-		this.motionSenseBattery.addAll(blankWindows);
+		this.markedWindows.addAll(blankWindows);
 	}
 
 }

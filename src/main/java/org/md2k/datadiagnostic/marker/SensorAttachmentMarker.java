@@ -9,25 +9,28 @@ import org.md2k.datadiagnostic.struct.DataPointQuality;
 import org.md2k.datadiagnostic.struct.DataPoints;
 import org.md2k.datadiagnostic.util.Statistics;
 
-public class SensorOffBodyMarker {
+import demo.SampleData;
 
-	public final List<DataPointQuality> improperOrNoAttachment;
+public class SensorAttachmentMarker {
 
-	public SensorOffBodyMarker() {
-		improperOrNoAttachment = new ArrayList<DataPointQuality>();
+	public final List<DataPointQuality> markedWindows;
+
+	public SensorAttachmentMarker() {
+		markedWindows = new ArrayList<DataPointQuality>();
 	}
 
-	public void improperOrNoAttachmentRIP(String inputPath, String streamName, List<DataPointQuality> windows) {
+	public void improperOrNoAttachmentRIP(List<DataPointQuality> windows) {
 		DataLoader dataLoader = new DataLoader();
 
 		long startTime = 0, endTime = 0;
 		List<Double> tmp = new ArrayList<Double>();
-
+		List<DataPoints> galvanicSkingResponse = new ArrayList<DataPoints>();
+		galvanicSkingResponse = dataLoader.loadCSV(SampleData.AUTOSENSE_GSR);
+		
 		for (int i = 0; i < windows.size(); i++) {
 			if (windows.get(i).getQuality() == 999) {
 
-				List<DataPoints> galvanicSkingResponse = new ArrayList<DataPoints>();
-				galvanicSkingResponse = dataLoader.loadCSV(inputPath + "AUTOSENSE_GSR.csv");
+				
 				startTime = windows.get(i).getDataPoints().get(0).getTimestamp();
 				endTime = windows.get(i).getDataPoints().get(windows.get(i).getDataPoints().size() - 1).getTimestamp();
 				for (int j = 0; j < galvanicSkingResponse.size(); j++) {
@@ -47,7 +50,7 @@ public class SensorOffBodyMarker {
 
 			tmp.clear();
 		}
-		improperOrNoAttachment.addAll(windows);
+		markedWindows.addAll(windows);
 	}
 
 	public void improperOrNoAttachmentMotionSense(List<DataPointQuality> windows) {
@@ -82,7 +85,7 @@ public class SensorOffBodyMarker {
 			tmp.clear();
 
 		}
-		improperOrNoAttachment.addAll(windows);
+		markedWindows.addAll(windows);
 	}
 
 	
@@ -119,6 +122,6 @@ public class SensorOffBodyMarker {
 			tmp.clear();
 
 		}
-		improperOrNoAttachment.addAll(windows);
+		markedWindows.addAll(windows);
 	}
 }

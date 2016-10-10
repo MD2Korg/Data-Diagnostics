@@ -98,4 +98,42 @@ public class CSVExporter {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void writeToCSV(List<Double> windows, String outputFolderPath, String fileName) {
+		if(fileName.equals("")){
+			fileName = outputFolderPath+"temp.csv";
+		}else{
+			fileName = outputFolderPath+fileName;
+		}
+		List<DataPoints> dp = new ArrayList<DataPoints>();
+		try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
+			for (int i = 0; i < windows.size(); i++) {
+
+				// for(int j=0;j<dp.size();j++)
+				{
+
+					/*//human readable time and date
+					  Date startTime = new Date(windows.get(i).getTimestamp());
+					Date endTime = new Date(windows.get(i).getEndTimestamp());
+					
+					writer.write( startTime+ ", " + endTime + "\r");*/
+					
+					writer.write(windows.get(i) + "\r");
+
+				}
+
+			}
+
+		} catch (UnsupportedEncodingException e) {
+
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

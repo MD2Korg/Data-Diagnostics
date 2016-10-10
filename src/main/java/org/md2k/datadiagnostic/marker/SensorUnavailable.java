@@ -5,10 +5,14 @@ import java.util.List;
 
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.configurations.METADATA;
+import org.md2k.datadiagnostic.data.CSVExporter;
 import org.md2k.datadiagnostic.data.DataLoader;
 import org.md2k.datadiagnostic.struct.DataPointQuality;
 import org.md2k.datadiagnostic.struct.DataPoints;
 import org.md2k.datadiagnostic.util.Statistics;
+import org.md2k.datadiagnostic.util.Util;
+
+import demo.SampleData;
 
 /**
  * This class contains algorithms that distinguish various types (e.g., sensor
@@ -17,15 +21,15 @@ import org.md2k.datadiagnostic.util.Statistics;
  */
 public class SensorUnavailable {
 
-	public final List<DataPointQuality> sensorUnavailable;
+	public final List<DataPointQuality> markedWindows;
 
 	public SensorUnavailable() {
-		sensorUnavailable = new ArrayList<DataPointQuality>();
+		markedWindows = new ArrayList<DataPointQuality>();
 	}
 
 	// load data and compute mandated of chest-based accelerometer (x, y, and z)
 
-	public void autosenseWirelessDC(String inputPath, List<DataPointQuality> windows) {
+	public void autoSenseWirelessDC(List<DataPointQuality> windows) {
 		DataLoader dataLoader = new DataLoader();
 		List<DataPoints> accelerometerX = new ArrayList<DataPoints>();
 		
@@ -36,12 +40,9 @@ public class SensorUnavailable {
 		List<DataPoints> accelerometerMagnitude = new ArrayList<DataPoints>();
 		double magnitude;
 
-		accelerometerX = dataLoader.loadCSV(
-				inputPath+"AUTOSENSE_ACCELEROMETER_X.csv");
-		accelerometerY = dataLoader.loadCSV(
-				inputPath+"AUTOSENSE_ACCELEROMETER_Y.csv");
-		accelerometerZ = dataLoader.loadCSV(
-				inputPath+"AUTOSENSE_ACCELEROMETER_Z.csv");
+		accelerometerX = dataLoader.loadCSV(SampleData.AUTOSENSE_ACCELEROMETER_X);
+		accelerometerY = dataLoader.loadCSV(SampleData.AUTOSENSE_ACCELEROMETER_Y);
+		accelerometerZ = dataLoader.loadCSV(SampleData.AUTOSENSE_ACCELEROMETER_Z);
 
 		int size = Math.max(Math.max(accelerometerX.size(), accelerometerY.size()), accelerometerZ.size());
 		// System.out.println(accelerometerX.size() +" - "+
@@ -75,12 +76,11 @@ public class SensorUnavailable {
 			accelerometerMagnitude.add(new DataPoints(timestamp, magnitude));
 
 		}
-		// CSVExporter.writeToCSV(accelerometerMagnitude,
-		// "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/Ali09192016/merged/",
-		// "acce_merg.csv");
+		Util.createWindows(accelerometerMagnitude, 10000);
+		CSVExporter.writeDataPointsToCSV(accelerometerMagnitude,"F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/students/output/", "acce_merg.csv");
 		// accelerometerMagnitude.forEach(System.out::println);
 
-		WirelessDC((List<DataPoints>) accelerometerX, windows);
+		WirelessDC((List<DataPoints>) accelerometerMagnitude, windows);
 	}
 	
 	public void motionsenseWirelessDC(List<DataPointQuality> windows) {
@@ -122,7 +122,7 @@ public class SensorUnavailable {
 
 					Statistics statistics = new Statistics(tmp);
 					System.out.println(startDCTime + " - " + tmp.size() + " - " + statistics.getVariance()+" - "+vari);
-					if (statistics.getVariance() > vari) {
+					if (statistics.getVariance() > 4000) {
 						for (int k = i; k < windows.size() - 1; k++) {
 							if (windows.get(k).getQuality() != METADATA.SENSOR_POWERED_OFF) {
 								break;
@@ -137,6 +137,6 @@ public class SensorUnavailable {
 
 			}
 		}
-		sensorUnavailable.addAll(windows);
+		markedWindows.addAll(windows);
 	}
 }

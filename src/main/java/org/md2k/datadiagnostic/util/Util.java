@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.md2k.datadiagnostic.data.CSVExporter;
 import org.md2k.datadiagnostic.struct.*;
 
 import org.junit.experimental.theories.DataPoint;
@@ -76,7 +78,44 @@ public class Util {
 		return finalDP;
 	}
 
-	
+	public static void createWindows(List<DataPoints> data, long size) {
+		long startTime, endTime;
+		List<DataPointQuality> windows = new ArrayList<DataPointQuality>();
+		List<DataPoints> tempArray = new ArrayList<DataPoints>();
+		List<Double> tempDP = new ArrayList<Double>();
+		startTime = data.get(0).getTimestamp();
+		endTime = data.get(0).getTimestamp() + size;
+
+		List<Integer> temp1 = new ArrayList<Integer>();
+		
+		for (int i = 0; i < data.size(); i++) {
+
+			if (data.get(i).getTimestamp() >= startTime && data.get(i).getTimestamp() < endTime) {
+				tempArray.add(new DataPoints(data.get(i).getTimestamp(), data.get(i).getValue()));
+				tempDP.add(data.get(i).getValue());
+				Statistics statistics = new Statistics(tempDP);
+				temp1.add((int) data.get(i).getValue());
+				if (i == data.size() - 1) {
+					windows.add(new DataPointQuality(tempArray, (int) statistics.getVariance()));
+				}
+			} else {
+				tempDP.add(data.get(i).getValue());
+				Statistics statistics = new Statistics(tempDP);
+				windows.add(new DataPointQuality(tempArray, (int) statistics.getVariance()));
+				
+				
+				startTime = data.get(i).getTimestamp();
+				endTime = data.get(i).getTimestamp() + size;
+				tempArray.clear();
+				tempArray.add(new DataPoints(data.get(i).getTimestamp(), data.get(i).getValue()));
+				if (i == data.size() - 1) {
+					windows.add(new DataPointQuality(tempArray, (int) statistics.getVariance()));
+				}
+				temp1.clear();
+			}
+		}
+		CSVExporter.writeDataPointQualityToCSV(windows,"F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/students/output/", "acce_merg_10.csv");
+	}
 	/**
 	 * 
 	 * @param currentTimestamp

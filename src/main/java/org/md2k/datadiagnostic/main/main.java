@@ -3,17 +3,17 @@
  */
 package org.md2k.datadiagnostic.main;
 
+import demo.SampleData;
+
 public class main {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String inputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/students/azeem/merged/";
-		String outputPath = "F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/students/output/";
 		
-		new Runner(inputPath, outputPath);
+		new Runner();
 
-		System.out.println("Diagnostic results are in: "+outputPath);
+		System.out.println("Diagnostic results are in: "+SampleData.OUTPUT_PATH);
 	}
 }

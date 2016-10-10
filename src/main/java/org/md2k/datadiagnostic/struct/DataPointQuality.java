@@ -34,7 +34,8 @@ public class DataPointQuality {
 		this.window.addAll(datapoints);
 		this.metadata = metadata;
 	}
-
+	
+	
 	/**
 	 * 
 	 * @return {@link DataPoints}
