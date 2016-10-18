@@ -16,8 +16,8 @@ public class CSVParser implements Iterable<DataPoints> {
     }
 
     /**
-     * Import data from a CSV file.
-     * 
+     * Import data from a CSV file. Format of a file shall be: <br>
+     * Timestamp, value, sensor-signal-value
      * @param filename CSV file name.
      * @return {@link DataPoints}
      */
@@ -49,6 +49,12 @@ public class CSVParser implements Iterable<DataPoints> {
         return this.data;
     }
     
+    /**
+     * Import data from a CSV file and calculate magnitude. Format of a file shall be: <br>
+     * Timestamp, value, x,y,z
+     * @param filename CSV file name.
+     * @return {@link DataPoints}
+     */
     public List<DataPoints> importWristData(String filename) {
 
         DataPoints tempPacket;

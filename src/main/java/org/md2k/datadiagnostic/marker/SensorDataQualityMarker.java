@@ -4,31 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.md2k.datadiagnostic.signalquality.algorithms.VarianceBasedDataQuality;
-import org.md2k.datadiagnostic.struct.DataPointQuality;
+import org.md2k.datadiagnostic.struct.MarkedDataPoints;
 
 public class SensorDataQualityMarker {
 
-	public final List<DataPointQuality> markedWindows;
+	public final List<MarkedDataPoints> markedWindows;
 
 	public SensorDataQualityMarker() {
-		markedWindows = new ArrayList<DataPointQuality>();
+		markedWindows = new ArrayList<MarkedDataPoints>();
 	}
 	
 	/**
-	 * This method mark the windows with various quality labels. For example, sensor on body.
 	 * 
-	 * @param blankWindows {@link DataPointQuality}
+	 * @param markedWindows {@link MarkedDataPoints}
 	 */
-	public void markWindowsQulaity(List<DataPointQuality> blankWindows) {
+	public void markWindowsQulaity(List<MarkedDataPoints> markedWindows) {
 		VarianceBasedDataQuality varianceBasedDataQuality = new VarianceBasedDataQuality();
 		int quality;
 		
-		for (int i = 0; i < blankWindows.size(); i++) {
-			if (blankWindows.get(i).getQuality() == 999) {
-				quality = varianceBasedDataQuality.dataQualityMarker(blankWindows.get(i).getDataPoints());
-				blankWindows.get(i).setQuality(quality);
+		for (int i = 0; i < markedWindows.size(); i++) {
+			if (markedWindows.get(i).getQuality() == 999) {
+				quality = varianceBasedDataQuality.dataQualityMarker(markedWindows.get(i).getDataPoints());
+				markedWindows.get(i).setQuality(quality);
 			}
 		}
-		markedWindows.addAll(blankWindows);
+		this.markedWindows.addAll(markedWindows);
 	}
 }

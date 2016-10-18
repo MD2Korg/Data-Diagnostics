@@ -4,9 +4,9 @@ package org.md2k.datadiagnostic.struct;
 public class DataPoints  implements Comparable<DataPoints>{
 
 
-    public long timestamp;
-	public double value;
+    public long startTimestamp;
     public long endTimestamp;
+    public double value;
 
 
     /**
@@ -16,18 +16,18 @@ public class DataPoints  implements Comparable<DataPoints>{
      * @param value a value corresponding to a timestamp
      */
     public DataPoints(long timestamp, double value) {
-        this.timestamp = timestamp;
+        this.startTimestamp = timestamp;
         this.value = value;
     }
     
     /**
      * DataPoint Constructor
      *
-     * @param timestamp Start Time in milliseconds since Jan 1st, 1970
+     * @param startTimestamp Start Time in milliseconds since Jan 1st, 1970
      * @param endTimestamp     End Time in milliseconds since Jan 1st, 1970
      */
-    public DataPoints(long timestamp, long endTimestamp) {
-        this.timestamp = timestamp;
+    public DataPoints(long startTimestamp, long endTimestamp) {
+        this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;
     }
 
@@ -39,14 +39,14 @@ public class DataPoints  implements Comparable<DataPoints>{
      */
     public DataPoints(DataPoints other) {
         this.value = other.value;
-        this.timestamp = other.timestamp;
+        this.startTimestamp = other.startTimestamp;
     }
 
     /**
      * @return long start timestamp of a window
      */
-    public long getTimestamp(){
-		return timestamp;
+    public long getStartTimestamp(){
+		return startTimestamp;
 	}
 	
     /**
@@ -66,8 +66,8 @@ public class DataPoints  implements Comparable<DataPoints>{
 	/**
 	 * @param timestamp long
 	 */
-	public void setTimestamp(long timestamp){
-		this.timestamp = timestamp;
+	public void setStartTimestamp(long timestamp){
+		this.startTimestamp = timestamp;
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class DataPoints  implements Comparable<DataPoints>{
      */
     @Override
     public String toString() {
-        return "DP:(" + this.timestamp + "," + this.value + ")";
+        return "DP:(" + this.startTimestamp + "," + this.value + ")";
     }
 
 
@@ -97,9 +97,9 @@ public class DataPoints  implements Comparable<DataPoints>{
 	@Override
 	public int compareTo(DataPoints o) {
 		// TODO Auto-generated method stub
-		 if (this.timestamp < o.timestamp) {
+		 if (this.startTimestamp < o.startTimestamp) {
 	            return -1; //"this" is before "o"
-	        }else if (this.timestamp > o.timestamp) {
+	        }else if (this.startTimestamp > o.startTimestamp) {
 	            return 1; //"this" is before "o"
 	        } else {
 	            return 0; //"this" is after "o"
@@ -115,7 +115,7 @@ public class DataPoints  implements Comparable<DataPoints>{
 	    DataPoints that = (DataPoints) other;
 
 	    // Custom equality check here.
-	    return this.timestamp==that.timestamp
+	    return this.startTimestamp==that.startTimestamp
 	        && this.endTimestamp==that.endTimestamp;
 	}
 }

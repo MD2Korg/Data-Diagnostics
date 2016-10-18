@@ -12,7 +12,7 @@ public class main {
 	 */
 	public static void main(String[] args) {
 		
-		new Runner();
+		new DiagnoseData();
 
 		System.out.println("Diagnostic results are in: "+SampleData.OUTPUT_PATH);
 	}

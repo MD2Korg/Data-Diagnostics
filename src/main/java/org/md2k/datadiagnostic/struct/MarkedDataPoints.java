@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.md2k.datadiagnostic.configurations.METADATA;
 
-public class DataPointQuality {
+public class MarkedDataPoints {
 
 	public List<DataPoints> window = new ArrayList<DataPoints>();
 	public int metadata;
@@ -29,7 +29,7 @@ public class DataPointQuality {
 	 * @param datapoints {@link DataPoints}
 	 * @param metadata {@link Integer} 
 	 */
-	public DataPointQuality(List<DataPoints> datapoints, int metadata) {
+	public MarkedDataPoints(List<DataPoints> datapoints, int metadata) {
 
 		this.window.addAll(datapoints);
 		this.metadata = metadata;

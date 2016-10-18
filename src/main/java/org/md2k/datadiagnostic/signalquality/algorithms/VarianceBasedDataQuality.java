@@ -6,7 +6,7 @@ import java.util.List;
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.configurations.METADATA;
 import org.md2k.datadiagnostic.struct.DataPoints;
-import org.md2k.datadiagnostic.util.Statistics;
+import org.md2k.datadiagnostic.util.DataStatistics;
 
 
 public class VarianceBasedDataQuality {
@@ -14,7 +14,7 @@ public class VarianceBasedDataQuality {
 	 // 0.00003 for microsoft band
 
 	/**
-	 * This method uses variance to evaluate the quality of signals. 
+	 * This method uses variance of a window to evaluate the quality of signals in it. 
 	 * 
 	 * @param timestampsAndValues {@link DataPoints}
 	 * @param expectedSamples long
@@ -28,13 +28,13 @@ public class VarianceBasedDataQuality {
 			values.add(timestampsAndValues.get(i).getValue());
 		}
 
-		Statistics statistics = new Statistics(values);
+		DataStatistics statistics = new DataStatistics(values);
 		normalValues.addAll(statistics.StatisticalOutLierAnalysis());
 
 		// TO-DO
 		// Mark window as jerks if outliers are 70% of a window.
 
-		Statistics statistics2 = new Statistics(normalValues);
+		DataStatistics statistics2 = new DataStatistics(normalValues);
 		double variance = statistics2.getVariance();
 
 		if (variance < DDT_PARAMETERS.VARIANCE_THRESHOLD) {

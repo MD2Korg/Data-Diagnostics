@@ -10,12 +10,12 @@ import org.md2k.datadiagnostic.struct.*;
 public class FixedSizeWindowing {
 
 	
-	public List<DataPointQuality> windows;
-	public List<DataPointQuality> blankWindows;
+	public List<MarkedDataPoints> windows;
+	public List<MarkedDataPoints> blankWindows;
 	
 	public FixedSizeWindowing(){
-		windows = new ArrayList<DataPointQuality>();
-		blankWindows = new ArrayList<DataPointQuality>();
+		windows = new ArrayList<MarkedDataPoints>();
+		blankWindows = new ArrayList<MarkedDataPoints>();
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class FixedSizeWindowing {
 	public void blankWindows(List<DataPoints> sensorRawData, long startTime, long endTime, long size) {
 		List<DataPoints> tempArray = new ArrayList<DataPoints>();
 		
-		long totalMinutes = ((endTime - startTime)/1000)/60;
+		long totalMinutes = ((endTime - startTime)/size);
 		Math.round(totalMinutes);
 		for(int i=0;i<totalMinutes;i++){
 			long windowStartTime=startTime;
@@ -38,14 +38,14 @@ public class FixedSizeWindowing {
 			
 			tempArray.add(new DataPoints(windowStartTime, 000)); 
 			for (int j = 0; j < sensorRawData.size(); j++) {
-				if(sensorRawData.get(j).getTimestamp()>=windowStartTime && sensorRawData.get(j).getTimestamp()<=startTime){
-					tempArray.add(new DataPoints(sensorRawData.get(j).getTimestamp(), sensorRawData.get(j).getValue()));
+				if(sensorRawData.get(j).getStartTimestamp()>=windowStartTime && sensorRawData.get(j).getStartTimestamp()<=startTime){
+					tempArray.add(new DataPoints(sensorRawData.get(j).getStartTimestamp(), sensorRawData.get(j).getValue()));
 				}
 			}
 			tempArray.add(new DataPoints(startTime, 000));
 			
 			 if(!tempArray.isEmpty()){
-				 blankWindows.add(new DataPointQuality(tempArray, 999));
+				 blankWindows.add(new MarkedDataPoints(tempArray, 999));
 			 }
 			tempArray.clear();
 			
@@ -64,21 +64,21 @@ public class FixedSizeWindowing {
 		List<DataPoints> mergedWindows = new ArrayList<DataPoints>();
 
 		if (windows.size() == 1) {
-			mergedWindows.add(new DataPoints(windows.get(0).getTimestamp(), windows.get(0).getEndTimestamp()));
+			mergedWindows.add(new DataPoints(windows.get(0).getStartTimestamp(), windows.get(0).getEndTimestamp()));
 		}
 		for (int i = 0; i < windows.size() - 1; i++) {
 
-			if (windows.get(i + 1).getTimestamp() - windows.get(i).getEndTimestamp() > size) {
+			if (windows.get(i + 1).getStartTimestamp() - windows.get(i).getEndTimestamp() > size) {
 
 				if (temp.size() == 0) {
-					mergedWindows.add(new DataPoints(windows.get(i).getTimestamp(), windows.get(i).getEndTimestamp()));
+					mergedWindows.add(new DataPoints(windows.get(i).getStartTimestamp(), windows.get(i).getEndTimestamp()));
 				} else {
 					mergedWindows.add(new DataPoints(temp.get(0), windows.get(i).getEndTimestamp()));
 				}
 
 				temp.clear();
 			} else {
-				temp.add(windows.get(i).getTimestamp());
+				temp.add(windows.get(i).getStartTimestamp());
 				if (i == windows.size() - 2) {
 					mergedWindows.add(new DataPoints(temp.get(0), windows.get(i + 1).getEndTimestamp()));
 				}

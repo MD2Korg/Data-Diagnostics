@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Statistics {
+public class DataStatistics {
 	List<Double> data;
 	int size;
 
-	public Statistics(List<Double> data) {
+	public DataStatistics(List<Double> data) {
 		this.data = data;
 		size = data.size();
 	}

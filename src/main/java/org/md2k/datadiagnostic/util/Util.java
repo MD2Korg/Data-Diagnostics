@@ -15,17 +15,17 @@ public class Util {
 
 	
 	/**
-	 * This method will sum all the timestamps stored in {@link DataPointQuality}
-	 * @param dps {@link DataPointQuality}
+	 * This method will sum all the timestamps stored in {@link MarkedDataPoints}
+	 * @param dps {@link MarkedDataPoints}
 	 * @return long totalTime
 	 */
-	public static long dataPointsQualityTime(List<DataPointQuality> dps) {
+	public static long dataPointsQualityTime(List<MarkedDataPoints> dps) {
 		long startTime, endTime, totalTime = 0;
 		int temp;
 		for (int i = 0; i < dps.size(); i++) {
 			temp = dps.get(i).getDataPoints().size();
-			startTime = dps.get(i).getDataPoints().get(0).getTimestamp();
-			endTime = dps.get(i).getDataPoints().get(temp - 1).getTimestamp();
+			startTime = dps.get(i).getDataPoints().get(0).getStartTimestamp();
+			endTime = dps.get(i).getDataPoints().get(temp - 1).getStartTimestamp();
 
 			totalTime += endTime - startTime;
 		}
@@ -42,7 +42,7 @@ public class Util {
 		long totalTime = 0;
 
 		for (int i = 0; i < dps.size(); i++) {
-			totalTime += dps.get(i).getEndTimestamp() - dps.get(i).getTimestamp();
+			totalTime += dps.get(i).getEndTimestamp() - dps.get(i).getStartTimestamp();
 		}
 
 		return totalTime;
@@ -72,7 +72,7 @@ public class Util {
 				}
 			}
 			if(tmp==1){
-				finalDP.add(new DataPoints(haystack.get(i).getTimestamp(), haystack.get(i).getEndTimestamp()));
+				finalDP.add(new DataPoints(haystack.get(i).getStartTimestamp(), haystack.get(i).getEndTimestamp()));
 			}
 		}
 		return finalDP;
@@ -80,41 +80,41 @@ public class Util {
 
 	public static void createWindows(List<DataPoints> data, long size) {
 		long startTime, endTime;
-		List<DataPointQuality> windows = new ArrayList<DataPointQuality>();
+		List<MarkedDataPoints> windows = new ArrayList<MarkedDataPoints>();
 		List<DataPoints> tempArray = new ArrayList<DataPoints>();
 		List<Double> tempDP = new ArrayList<Double>();
-		startTime = data.get(0).getTimestamp();
-		endTime = data.get(0).getTimestamp() + size;
+		startTime = data.get(0).getStartTimestamp();
+		endTime = data.get(0).getStartTimestamp() + size;
 
 		List<Integer> temp1 = new ArrayList<Integer>();
 		
 		for (int i = 0; i < data.size(); i++) {
 
-			if (data.get(i).getTimestamp() >= startTime && data.get(i).getTimestamp() < endTime) {
-				tempArray.add(new DataPoints(data.get(i).getTimestamp(), data.get(i).getValue()));
+			if (data.get(i).getStartTimestamp() >= startTime && data.get(i).getStartTimestamp() < endTime) {
+				tempArray.add(new DataPoints(data.get(i).getStartTimestamp(), data.get(i).getValue()));
 				tempDP.add(data.get(i).getValue());
-				Statistics statistics = new Statistics(tempDP);
+				DataStatistics statistics = new DataStatistics(tempDP);
 				temp1.add((int) data.get(i).getValue());
 				if (i == data.size() - 1) {
-					windows.add(new DataPointQuality(tempArray, (int) statistics.getVariance()));
+					windows.add(new MarkedDataPoints(tempArray, (int) statistics.getVariance()));
 				}
 			} else {
 				tempDP.add(data.get(i).getValue());
-				Statistics statistics = new Statistics(tempDP);
-				windows.add(new DataPointQuality(tempArray, (int) statistics.getVariance()));
+				DataStatistics statistics = new DataStatistics(tempDP);
+				windows.add(new MarkedDataPoints(tempArray, (int) statistics.getVariance()));
 				
 				
-				startTime = data.get(i).getTimestamp();
-				endTime = data.get(i).getTimestamp() + size;
+				startTime = data.get(i).getStartTimestamp();
+				endTime = data.get(i).getStartTimestamp() + size;
 				tempArray.clear();
-				tempArray.add(new DataPoints(data.get(i).getTimestamp(), data.get(i).getValue()));
+				tempArray.add(new DataPoints(data.get(i).getStartTimestamp(), data.get(i).getValue()));
 				if (i == data.size() - 1) {
-					windows.add(new DataPointQuality(tempArray, (int) statistics.getVariance()));
+					windows.add(new MarkedDataPoints(tempArray, (int) statistics.getVariance()));
 				}
 				temp1.clear();
 			}
 		}
-		CSVExporter.writeDataPointQualityToCSV(windows,"F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/students/output/", "acce_merg_10.csv");
+		CSVExporter.writeMarkedDataPointsToCSV(windows,"F:/workspace/memphis/md2k_projects/DataDiagnostics_v1/data/students/output/", "acce_merg_10.csv");
 	}
 	/**
 	 * 

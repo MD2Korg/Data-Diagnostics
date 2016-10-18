@@ -5,23 +5,23 @@ import java.util.List;
 
 import org.md2k.datadiagnostic.configurations.DDT_PARAMETERS;
 import org.md2k.datadiagnostic.configurations.METADATA;
-import org.md2k.datadiagnostic.struct.DataPointQuality;
+import org.md2k.datadiagnostic.struct.MarkedDataPoints;
 
 public class DataLossMarker {
-	public final List<DataPointQuality> markedWindows;
+	public final List<MarkedDataPoints> markedWindows;
 
 	public DataLossMarker() {
-		markedWindows = new ArrayList<DataPointQuality>();
+		markedWindows = new ArrayList<MarkedDataPoints>();
 	}
 
 	/**
-	 * This method marks a window as data loss if packets contained in a window is less than a threshold.
+	 * Marks a window as data loss if packets contained in a window is less than a threshold.
 	 * 
-	 * @param blankWindows {@link DataPointQuality}
+	 * @param blankWindows {@link MarkedDataPoints}
 	 * @param windowSize double
 	 * @param samplingRate double
 	 */
-	public void packetLoss(List<DataPointQuality> blankWindows, double windowSize, double samplingRate) {
+	public void packetLoss(List<MarkedDataPoints> blankWindows, double windowSize, double samplingRate) {
 		long expectedSamples = 0;
 		int size;
 
