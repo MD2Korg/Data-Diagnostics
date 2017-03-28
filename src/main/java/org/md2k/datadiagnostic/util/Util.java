@@ -8,7 +8,6 @@ import java.util.List;
 import org.md2k.datadiagnostic.data.CSVExporter;
 import org.md2k.datadiagnostic.struct.*;
 
-import org.junit.experimental.theories.DataPoint;
 
 public class Util {
 

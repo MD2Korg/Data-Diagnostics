@@ -53,11 +53,14 @@ public class DataStatistics {
 
 	public double median() {
 		Collections.sort(data);
-
-		if (data.size() % 2 == 0) {
-			return (data.get((data.size() / 2) - 1) + data.get(data.size() / 2)) / 2.0;
-		} else {
-			return data.get(data.size() / 2);
+		if (data.size() != 0) {
+			if (data.size() % 2 == 0) {
+				return (data.get((data.size() / 2) - 1) + data.get(data.size() / 2)) / 2.0;
+			} else {
+				return data.get(data.size() / 2);
+			}
+		}else{
+			return 0;
 		}
 	}
 }
