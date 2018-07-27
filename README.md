@@ -8,11 +8,11 @@ You can find more information about MD2K software on our [software website](http
 
 ## Installation
 
-####Supported sensors
+#### Supported sensors
 1. Autosense
 2. MotionSense
 
-####How to run?
+#### How to run?
 * Download zip file from [release tab](https://github.com/nasirali1/DataDiagnostic/releases) and unzip it anywhere on your computer/server
 * Open /config/config.properties file and update input/out paths of csv files. All other configurations are experimental threshold values to diagnose data. Please read comments in configuration file for each threshold values. 
 * Run following command:
